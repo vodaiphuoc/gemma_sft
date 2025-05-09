@@ -3,7 +3,7 @@ import os
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 
-def training(
+def training_process(
         model_id:str, 
         train_path:str, 
         test_path:str,

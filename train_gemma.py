@@ -1,10 +1,10 @@
 import os
 os.environ["WANDB_DISABLED"] = "true"
 
-from commons import training
+from commons.training import training_process
 
 def main():
-    training(
+    training_process(
         model_id = "google/gemma-3-1b-it", 
         train_path = os.path.dirname(__file__) + "/sample_data/traindata", 
         test_path = os.path.dirname(__file__) + "/sample_data/testdata",
