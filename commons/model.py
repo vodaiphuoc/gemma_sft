@@ -1,9 +1,10 @@
+from .chat_template import adjust_tokenizer
+
 def get_model_tokenizer(model_id:str = "google/gemma-3-1b-it"):
     from transformers import (
         AutoTokenizer, 
         AutoModelForCausalLM
     )
-    from trl import setup_chat_format
     
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     
@@ -17,6 +18,6 @@ def get_model_tokenizer(model_id:str = "google/gemma-3-1b-it"):
     )
 
     if tokenizer.chat_template is None:
-        return setup_chat_format(model, tokenizer)
+        return adjust_tokenizer(model, tokenizer)
     else:
         return model, tokenizer
