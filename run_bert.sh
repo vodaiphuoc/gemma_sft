@@ -1,1 +1,1 @@
-accelerate launch --config_file ./config/bert.yaml train_bert.py
+accelerate launch --config_file config/bert.yaml train_bert.py

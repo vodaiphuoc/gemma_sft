@@ -1,7 +1,7 @@
 import os
 os.environ["WANDB_DISABLED"] = "true"
 
-from .commons import training
+from commons import training
 
 def main():
     training(
