@@ -37,7 +37,7 @@ def get_model_tokenizer():
 
 def get_datasets(
         train_path: str = "./data/traindata", 
-        test_path:str = "./data/traindata"
+        test_path:str = "./data/testdata"
     ):
     from datasets import load_from_disk
     return load_from_disk(train_path), load_from_disk(test_path)
@@ -46,7 +46,10 @@ def main():
     
     model, tokenizer = get_model_tokenizer()
 
-    converted_traindata, converted_testdata = get_datasets()
+    converted_traindata, converted_testdata = get_datasets(
+        train_path = os.path.dirname(__file__) + "/sample_data/traindata", 
+        test_path = os.path.dirname(__file__) + "/sample_data/testdata"
+    )
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
