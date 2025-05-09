@@ -2,3 +2,4 @@ trl
 transformers 
 bitsandbytes 
 accelerate
+torch==2.7
