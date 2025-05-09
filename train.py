@@ -6,25 +6,17 @@ os.environ["WANDB_DISABLED"] = "true"
 def get_model_tokenizer():
     from transformers import (
         AutoTokenizer, 
-        AutoModelForCausalLM, 
-        BitsAndBytesConfig
+        AutoModelForCausalLM,
     )
     
     model_id = "google/gemma-3-1b-it"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     
-    import torch
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16
-    )
     from accelerate import PartialState
     device_string = PartialState().process_index
     
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, 
-        quantization_config=bnb_config,
+        model_id,
         attn_implementation='eager',
         device_map={'':device_string}
     )
@@ -49,6 +41,7 @@ def main():
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
+    from torchmetrics.functional.text.rouge import rouge_score
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
@@ -72,8 +65,12 @@ def main():
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
         
-        result = bleu_score(preds=decoded_preds, target=decoded_labels)
-        return {"bleu": result}
+        bleu_value = bleu_score(preds=decoded_preds, target=decoded_labels)
+        rouge_value = rouge_score(preds=decoded_preds, target=decoded_labels)
+        return {
+            "bleu": bleu_value,
+            "rouge": rouge_value
+        }
     
     from trl import SFTConfig, SFTTrainer
     from peft import LoraConfig
