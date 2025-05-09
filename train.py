@@ -43,6 +43,7 @@ def get_datasets(
     return load_from_disk(train_path), load_from_disk(test_path)
 
 def main():
+    os.environ["ACCELERATE_USE_FSDP"]= "true"
     
     model, tokenizer = get_model_tokenizer()
 
