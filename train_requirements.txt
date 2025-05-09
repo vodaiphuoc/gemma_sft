@@ -1,7 +1,7 @@
 trl
 transformers 
 bitsandbytes 
-accelerate
+accelerate==1.7.0
 torch
 torchvision 
 torchaudio
