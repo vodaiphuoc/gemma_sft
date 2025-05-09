@@ -1,6 +1,5 @@
 trl
 transformers 
-bitsandbytes 
 accelerate==1.6.0
 torch
 torchvision 
