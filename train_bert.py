@@ -6,8 +6,8 @@ from commons.training import training_process
 def main():
     training_process(
         model_id = "google-bert/bert-base-uncased", 
-        train_path = os.path.dirname(__file__) + "/sample_data/traindata", 
-        test_path = os.path.dirname(__file__) + "/sample_data/testdata",
+        train_path = os.path.dirname(__file__) + "/data/traindata", 
+        test_path = os.path.dirname(__file__) + "/data/testdata",
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         use_lora = False,
         num_train_epochs = 4,
