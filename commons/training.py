@@ -8,6 +8,7 @@ def training_process(
         train_path:str, 
         test_path:str,
         checkpoint_save_dir:str,
+        use_lora: bool,
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
         eval_batch_size:int = 8,
@@ -56,14 +57,18 @@ def training_process(
         }
     
     from trl import SFTConfig, SFTTrainer
-    from peft import LoraConfig
-    
-    lora_config = LoraConfig(
-        r=8,
-        target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
-        task_type="CAUSAL_LM",
-    )
 
+    if use_lora:
+        from peft import LoraConfig
+        
+        lora_config = LoraConfig(
+            r=8,
+            target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
+            task_type="CAUSAL_LM",
+        )
+    else:
+        lora_config = None
+    
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
