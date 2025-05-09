@@ -4,11 +4,6 @@ os.environ["WANDB_DISABLED"] = "true"
 
 
 def get_model_tokenizer():
-    # from trl import (
-    #     get_kbit_device_map,
-    #     get_peft_config,
-    #     get_quantization_config,
-    # )
     from transformers import (
         AutoTokenizer, 
         AutoModelForCausalLM, 
@@ -18,18 +13,18 @@ def get_model_tokenizer():
     model_id = "google/gemma-3-1b-it"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     
-    # import torch
-    # bnb_config = BitsAndBytesConfig(
-    #     load_in_4bit=True,
-    #     bnb_4bit_quant_type="nf4",
-    #     bnb_4bit_compute_dtype=torch.bfloat16
-    # )
+    import torch
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
     from accelerate import PartialState
     device_string = PartialState().process_index
     
     model = AutoModelForCausalLM.from_pretrained(
         model_id, 
-        # quantization_config=bnb_config,
+        quantization_config=bnb_config,
         attn_implementation='eager',
         device_map={'':device_string}
     )
@@ -112,14 +107,16 @@ def main():
             max_seq_length = 128,
             logging_strategy = 'epoch',
             output_dir="outputs",
-            # optim="paged_adamw_8bit"
         ),
         peft_config=lora_config, # lora config
     )
-        
+    print('start training')
     trainer.train()
+    print('done training, saving model')
     trainer.save_model(os.path.join(os.path.dirname(__file__),"checkpoints"))
-    trainer.evaluate()
+    print('run evaluate')
+    output_metrics = trainer.evaluate()
+    print('output metrics: ', output_metrics)
 
 if __name__ == '__main__':
     main()
