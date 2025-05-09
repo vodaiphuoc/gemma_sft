@@ -2,8 +2,8 @@ from datasets import load_dataset
 import datasets
 # empathetic_dialogues
 data = load_dataset("facebook/empathetic_dialogues", trust_remote_code=True)
-traindata = data['train']
-testdata = data['test']
+traindata = data['train'].select(list(range(20000)))
+testdata = data['test'].select(list(range(5000)))
 
 
 def make_dataset(
@@ -66,7 +66,7 @@ Conversation history:
 
     data = data.map(
         lambda x: _handler(x),
-        batch_size = 5000,
+        batch_size = 1000,
         batched = False
     )
     data = data.filter(lambda x: x['prompt'] is not None)
