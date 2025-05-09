@@ -1,4 +1,4 @@
-trl t
-ransformers 
+trl
+transformers 
 bitsandbytes 
 accelerate
