@@ -112,7 +112,7 @@ def main():
             max_seq_length = 128,
             logging_strategy = 'epoch',
             output_dir="outputs",
-            optim="paged_adamw_8bit"
+            # optim="paged_adamw_8bit"
         ),
         peft_config=lora_config, # lora config
     )
