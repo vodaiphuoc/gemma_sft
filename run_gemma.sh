@@ -1,0 +1,1 @@
+accelerate launch --config_file ./config/gemma.yaml train_gemma.py

@@ -1,42 +1,25 @@
-
 import os
-os.environ["WANDB_DISABLED"] = "true"
 
+from .model import get_model_tokenizer
+from .dataset import get_datasets
 
-def get_model_tokenizer():
-    from transformers import (
-        AutoTokenizer, 
-        AutoModelForCausalLM,
-    )
-    
-    model_id = "google/gemma-3-1b-it"
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    
-    from accelerate import PartialState
-    device_string = PartialState().process_index
-    
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        attn_implementation='eager',
-        device_map={'':device_string}
-    )
-    return model, tokenizer
-
-def get_datasets(
-        train_path: str = "./data/traindata", 
-        test_path:str = "./data/testdata"
+def training(
+        model_id:str, 
+        train_path:str, 
+        test_path:str,
+        checkpoint_save_dir:str,
+        num_train_epochs:int = 4,
+        train_batch_size:int = 8,
+        eval_batch_size:int = 8,
+        learning_rate: float = 2e-4
     ):
-    from datasets import load_from_disk
-    return load_from_disk(train_path), load_from_disk(test_path)
-
-def main():
     os.environ["ACCELERATE_USE_FSDP"]= "true"
     
-    model, tokenizer = get_model_tokenizer()
+    model, tokenizer = get_model_tokenizer(model_id = model_id)
 
     converted_traindata, converted_testdata = get_datasets(
-        train_path = os.path.dirname(__file__) + "/sample_data/traindata", 
-        test_path = os.path.dirname(__file__) + "/sample_data/testdata"
+        train_path = train_path, 
+        test_path = test_path
     )
 
     import numpy as np
@@ -91,13 +74,13 @@ def main():
         args = SFTConfig(
             do_train = True,
             do_eval = False,
-            num_train_epochs = 4,
-            per_device_train_batch_size = 6,
-            per_device_eval_batch_size = 6,
+            num_train_epochs = num_train_epochs,
+            per_device_train_batch_size = train_batch_size,
+            per_device_eval_batch_size = eval_batch_size,
             gradient_accumulation_steps= 3,
             warmup_steps=2,
             completion_only_loss = True,
-            learning_rate=2e-4,
+            learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
             max_length = 128,
@@ -110,10 +93,7 @@ def main():
     print('start training')
     trainer.train()
     print('done training, saving model')
-    trainer.save_model(os.path.join(os.path.dirname(__file__),"checkpoints"))
+    trainer.save_model(checkpoint_save_dir)
     print('run evaluate')
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
-
-if __name__ == '__main__':
-    main()
