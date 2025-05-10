@@ -2,3 +2,4 @@ results/
 myenv/
 *test*.py
 .temp*/
+*.pyc
