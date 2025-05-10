@@ -90,7 +90,9 @@ def training_process(
             max_seq_length = 128,
             logging_strategy = 'epoch',
             optim = 'adamw_torch_fused',
-            label_names=["labels"]
+            label_names=["labels"],
+            report_to = None,
+            dataloader_persistent_workers = True
         ),
         peft_config=lora_config, # lora config
     )
