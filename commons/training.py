@@ -91,8 +91,7 @@ def training_process(
             logging_strategy = 'epoch',
             optim = 'adamw_torch_fused',
             label_names=["labels"],
-            report_to = None,
-            dataloader_persistent_workers = True
+            report_to = None
         ),
         peft_config=lora_config, # lora config
     )
