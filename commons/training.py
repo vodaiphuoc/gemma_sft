@@ -53,6 +53,8 @@ def training_process(
         }
     
     from trl import SFTConfig, SFTTrainer
+    from optimum.tpu import fsdp_v2
+    fsdp_v2.use_fsdp_v2()
 
     if use_lora:
         from peft import LoraConfig
