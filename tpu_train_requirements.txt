@@ -1,4 +1,0 @@
-trl
-transformers 
-accelerate==1.6.0
-torchmetrics
