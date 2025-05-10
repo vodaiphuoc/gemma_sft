@@ -58,7 +58,8 @@ def training_process(
         from peft import LoraConfig
         
         lora_config = LoraConfig(
-            r=8,
+            r=16,
+            lora_alpha = 8,
             lora_dropout = 0.05,
             target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
             task_type="CAUSAL_LM",
@@ -77,20 +78,22 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
-            num_train_epochs = num_train_epochs,
+            # num_train_epochs = num_train_epochs,
+            max_steps = 20,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
-            gradient_accumulation_steps= 3,
+            gradient_accumulation_steps = 4,
             warmup_steps=2,
             completion_only_loss = True,
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 128,
+            max_length = 640,
+            packing = True,
             max_seq_length = 128,
-            logging_strategy = 'epoch',
             optim = 'adamw_torch_fused',
             label_names=["labels"],
+            logging_strategy = 'no',
             report_to = None
         ),
         peft_config=lora_config, # lora config

@@ -12,7 +12,7 @@ def main():
         num_train_epochs = 1,
         train_batch_size = 8,
         eval_batch_size = 8,
-        learning_rate = 2e-4
+        learning_rate = 1e-5
     )
 
 if __name__ == '__main__':
