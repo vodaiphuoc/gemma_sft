@@ -39,6 +39,7 @@ def make_dataset(
 
         user_content = f"""
 Conversation context: {row['context']}
+Context: {row['prompt'].replace('_comma_',',')}
 Conversation history:
 {''.join(history)}
 """
