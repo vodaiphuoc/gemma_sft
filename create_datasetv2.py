@@ -71,7 +71,7 @@ def make_dataset(
     print('duration: ', time.time() - _start_time)
 
 if __name__ == '__main__':
-    VERSION = "2.0"
+    VERSION = "2_0"
     # empathetic_dialogues
     data = load_dataset("facebook/empathetic_dialogues", trust_remote_code=True)
     traindata = data['train'].select(list(range(40000)))
