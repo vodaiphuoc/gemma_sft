@@ -58,8 +58,8 @@ def training_process(
         from peft import LoraConfig
         
         lora_config = LoraConfig(
-            r=32,
-            lora_alpha = 8,
+            r=16,
+            lora_alpha = 32,
             lora_dropout = 0.05,
             target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
             task_type="CAUSAL_LM",
