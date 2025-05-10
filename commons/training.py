@@ -59,6 +59,7 @@ def training_process(
         
         lora_config = LoraConfig(
             r=8,
+            lora_dropout = 0.05,
             target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
             task_type="CAUSAL_LM",
         )
@@ -88,7 +89,6 @@ def training_process(
             max_length = 128,
             max_seq_length = 128,
             logging_strategy = 'epoch',
-            output_dir="outputs",
             optim = 'adamw_torch_fused',
             label_names=["labels"]
         ),
@@ -98,6 +98,6 @@ def training_process(
     trainer.train()
     print('done training, saving model')
     trainer.save_model(checkpoint_save_dir)
-    print('run evaluate')
-    output_metrics = trainer.evaluate(converted_testdata)
-    print('output metrics: ', output_metrics)
+    # print('run evaluate')
+    # output_metrics = trainer.evaluate(converted_testdata)
+    # print('output metrics: ', output_metrics)
