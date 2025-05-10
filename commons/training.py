@@ -89,6 +89,7 @@ def training_process(
             max_seq_length = 128,
             logging_strategy = 'epoch',
             output_dir="outputs",
+            optim = 'adamw_torch_fused'
         ),
         peft_config=lora_config, # lora config
     )

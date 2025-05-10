@@ -18,6 +18,7 @@ Conversation context: {conv_data[-1]['context']}
 Context: {conv_data[-1]['prompt'].replace('_comma_',',')}
 Conversation history:
 {''.join(_history)}
+Base on context and history of above conversation, please give emotional and appropriate reponse.
 """ 
     return {
             "conv_id": conv_data[-1]['conv_id'],
