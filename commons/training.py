@@ -82,6 +82,7 @@ def training_process(
             max_steps = 20,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
+            dataset_num_proc = 2,
             gradient_accumulation_steps = 4,
             warmup_steps=2,
             completion_only_loss = True,

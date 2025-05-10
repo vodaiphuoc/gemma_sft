@@ -1,5 +1,6 @@
 results/
 myenv/
 *test*.py
+*test*.sh
 .temp*/
 *.pyc
