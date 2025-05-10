@@ -53,14 +53,12 @@ def training_process(
         }
     
     from trl import SFTConfig, SFTTrainer
-    from optimum.tpu import fsdp_v2
-    fsdp_v2.use_fsdp_v2()
 
     if use_lora:
         from peft import LoraConfig
         
         lora_config = LoraConfig(
-            r=16,
+            r=32,
             lora_alpha = 8,
             lora_dropout = 0.05,
             target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
@@ -80,11 +78,10 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
-            # num_train_epochs = num_train_epochs,
-            max_steps = 20,
+            num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
-            dataset_num_proc = 2,
+            dataset_num_proc = 4,
             dataloader_drop_last=True,
             gradient_accumulation_steps = 4,
             warmup_steps=2,
@@ -92,7 +89,7 @@ def training_process(
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 640,
+            max_length = 1024,
             packing = True,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
