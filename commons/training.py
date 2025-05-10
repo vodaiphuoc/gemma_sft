@@ -5,8 +5,7 @@ from .dataset import get_datasets
 
 def training_process(
         model_id:str, 
-        train_path:str, 
-        test_path:str,
+        data_version:str,
         checkpoint_save_dir:str,
         use_lora: bool,
         num_train_epochs:int = 4,
@@ -18,10 +17,7 @@ def training_process(
     
     model, tokenizer = get_model_tokenizer(model_id = model_id)
 
-    converted_traindata, converted_testdata = get_datasets(
-        train_path = train_path, 
-        test_path = test_path
-    )
+    converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version)
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -73,12 +69,13 @@ def training_process(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
-        eval_dataset = converted_testdata,
+        eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
         args = SFTConfig(
             do_train = True,
-            do_eval = False,
+            do_eval = True,
+            eval_strategy = 'epoch',
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
@@ -100,5 +97,5 @@ def training_process(
     print('done training, saving model')
     trainer.save_model(checkpoint_save_dir)
     print('run evaluate')
-    output_metrics = trainer.evaluate()
+    output_metrics = trainer.evaluate(converted_testdata)
     print('output metrics: ', output_metrics)

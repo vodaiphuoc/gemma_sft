@@ -67,7 +67,7 @@ def make_dataset(
         num_proc = 4
     )
 
-    new_data.save_to_disk(os.path.join(os.path.dirname(__file__),version,dataset_type))
+    new_data.save_to_disk(os.path.join(os.path.dirname(__file__),"data",version,dataset_type))
     print('duration: ', time.time() - _start_time)
 
 if __name__ == '__main__':
