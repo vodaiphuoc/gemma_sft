@@ -13,10 +13,10 @@ case "$1" in
             echo run with tpu
             
             echo setup optimum-tpu for tpu
-            pip install optimum-tpu -f https://storage.googleapis.com/libtpu-releases/index.html
+            pip install optimum-tpu -qf https://storage.googleapis.com/libtpu-releases/index.html
             
             echo setup dependencies in requirement
-            pip install -q -U -r train_requirements.txt
+            pip install -q -U -r dependencies/tpu_train_requirements.txt
 
             echo run train_gemma.py
             accelerate launch --config_file config/gemma_tpu.yaml train_gemma.py
@@ -24,7 +24,7 @@ case "$1" in
         elif [ "${run_with_tpu}" == "false" ]; then
 
             echo setup dependencies in requirement
-            pip install -q -U -r train_requirements.txt
+            pip install -q -U -r dependencies/train_requirements.txt
 
             echo run with gpu
             accelerate launch --config_file config/gemma.yaml train_gemma.py
