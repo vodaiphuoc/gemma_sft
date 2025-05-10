@@ -6,7 +6,7 @@ from commons.training import training_process
 def main():
     training_process(
         model_id = "google/gemma-3-1b-it", 
-        data_version = "2.0",
+        data_version = "1.0",
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         use_lora = True,
         num_train_epochs = 4,

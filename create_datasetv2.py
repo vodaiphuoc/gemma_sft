@@ -21,7 +21,6 @@ Conversation history:
 Base on context and history of above conversation, please give emotional and appropriate reponse.
 """ 
     return {
-            "conv_id": conv_data[-1]['conv_id'],
             "prompt": [
                 {
                     "role": "system",

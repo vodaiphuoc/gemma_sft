@@ -3,15 +3,11 @@
   "citation": "",
   "config_name": "default",
   "dataset_name": "generator",
-  "dataset_size": 2231474,
+  "dataset_size": 2037116,
   "description": "",
   "download_checksums": {},
   "download_size": 0,
   "features": {
-    "conv_id": {
-      "dtype": "string",
-      "_type": "Value"
-    },
     "prompt": [
       {
         "content": {
@@ -39,17 +35,17 @@
   },
   "homepage": "",
   "license": "",
-  "size_in_bytes": 2231474,
+  "size_in_bytes": 2037116,
   "splits": {
     "train": {
       "name": "train",
-      "num_bytes": 2231474,
-      "num_examples": 3864,
+      "num_bytes": 2037116,
+      "num_examples": 3096,
       "shard_lengths": [
-        976,
-        967,
-        961,
-        960
+        788,
+        765,
+        777,
+        766
       ],
       "dataset_name": "generator"
     }
