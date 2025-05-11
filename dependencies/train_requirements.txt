@@ -6,4 +6,3 @@ torch
 torchvision 
 torchaudio
 torchmetrics
-unsloth

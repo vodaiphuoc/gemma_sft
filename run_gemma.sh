@@ -25,6 +25,8 @@ case "$1" in
 
             echo setup dependencies in requirement
             pip install -q -U -r dependencies/train_requirements.txt
+            pip install "unsloth==2025.3.18"
+
             pip list
             echo run with gpu
             accelerate launch --config_file config/gemma.yaml train_gemma.py
