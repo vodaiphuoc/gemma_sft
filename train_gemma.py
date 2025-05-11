@@ -1,6 +1,6 @@
 import os
 os.environ["WANDB_DISABLED"] = "true"
-
+from unsloth import FastLanguageModel
 from commons.training import training_process
 
 def main():
@@ -9,7 +9,6 @@ def main():
         data_version = "2_0",
         ratio = 0.01,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
-        use_lora = True,
         num_train_epochs = 3,
         train_batch_size = 12,
         eval_batch_size = 12,

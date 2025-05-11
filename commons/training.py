@@ -8,7 +8,6 @@ def training_process(
         data_version:str,
         ratio: float,
         checkpoint_save_dir:str,
-        use_lora: bool,
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
         eval_batch_size:int = 8,
@@ -52,12 +51,12 @@ def training_process(
             "bleu": bleu_value,
             "rouge1_fmeasure": rouge_value['rouge1_fmeasure'],
             "rouge2_fmeasure": rouge_value['rouge2_fmeasure'],
-            "rougeL_fmeasure": rouge_score['rougeL_fmeasure']
+            "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
     from trl import SFTConfig, SFTTrainer
 
-    
+    print('check lora config: ', lora_config)
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
