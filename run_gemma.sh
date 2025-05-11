@@ -22,12 +22,11 @@ case "$1" in
             accelerate launch --config_file config/gemma_tpu.yaml train_gemma.py
 
         elif [ "${run_with_tpu}" == "false" ]; then
-
             echo setup dependencies in requirement
-            pip install "unsloth==2025.3.18"
-            pip install -q -U -r dependencies/train_requirements.txt
 
+            pip install -q -U -r dependencies/train_requirements.txt
             pip list
+            
             echo run with gpu
             accelerate launch --config_file config/gemma.yaml train_gemma.py
         
