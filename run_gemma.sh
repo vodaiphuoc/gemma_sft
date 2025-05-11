@@ -24,8 +24,8 @@ case "$1" in
         elif [ "${run_with_tpu}" == "false" ]; then
 
             echo setup dependencies in requirement
-            pip install -q -U -r dependencies/train_requirements.txt
             pip install "unsloth==2025.3.18"
+            pip install -q -U -r dependencies/train_requirements.txt
 
             pip list
             echo run with gpu
