@@ -4,7 +4,7 @@ from .model import get_model_tokenizer
 from .dataset import get_datasets
 
 def training_process(
-        model_id:str, 
+        model_key:str, 
         data_version:str,
         ratio: float,
         checkpoint_save_dir:str,
@@ -16,7 +16,7 @@ def training_process(
     ):
     os.environ["ACCELERATE_USE_FSDP"]= "true"
     
-    model, tokenizer = get_model_tokenizer(model_id = model_id)
+    model, tokenizer, lora_config = get_model_tokenizer(model_key = model_key)
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
@@ -57,18 +57,6 @@ def training_process(
     
     from trl import SFTConfig, SFTTrainer
 
-    if use_lora:
-        from peft import LoraConfig
-        
-        lora_config = LoraConfig(
-            r=16,
-            lora_alpha = 32,
-            lora_dropout = 0.05,
-            target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "down_proj"],
-            task_type="CAUSAL_LM",
-        )
-    else:
-        lora_config = None
     
     trainer = SFTTrainer(
         model = model,

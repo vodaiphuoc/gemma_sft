@@ -5,7 +5,7 @@ from commons.training import training_process
 
 def main():
     training_process(
-        model_id = "google/gemma-3-1b-it", 
+        model_key = "gemma_unsloth", 
         data_version = "2_0",
         ratio = 0.01,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
