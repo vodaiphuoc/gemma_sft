@@ -11,7 +11,7 @@ def main():
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         use_lora = True,
         num_train_epochs = 3,
-        train_batch_size = 8,
+        train_batch_size = 16,
         eval_batch_size = 8,
         learning_rate = 1e-5
     )
