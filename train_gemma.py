@@ -1,5 +1,4 @@
 import os
-os.environ["WANDB_DISABLED"] = "true"
 from unsloth import FastLanguageModel
 from commons.training import training_process
 
