@@ -6,6 +6,7 @@ from .dataset import get_datasets
 def training_process(
         model_id:str, 
         data_version:str,
+        ratio: float,
         checkpoint_save_dir:str,
         use_lora: bool,
         num_train_epochs:int = 4,
@@ -17,7 +18,7 @@ def training_process(
     
     model, tokenizer = get_model_tokenizer(model_id = model_id)
 
-    converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version)
+    converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -49,7 +50,9 @@ def training_process(
         rouge_value = rouge_score(preds=decoded_preds, target=decoded_labels)
         return {
             "bleu": bleu_value,
-            "rouge": rouge_value
+            "rouge1_fmeasure": rouge_value['rouge1_fmeasure'],
+            "rouge2_fmeasure": rouge_value['rouge2_fmeasure'],
+            "rougeL_fmeasure": rouge_score['rougeL_fmeasure']
         }
     
     from trl import SFTConfig, SFTTrainer
@@ -61,7 +64,7 @@ def training_process(
             r=16,
             lora_alpha = 32,
             lora_dropout = 0.05,
-            target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "up_proj", "down_proj"],
+            target_modules=["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "down_proj"],
             task_type="CAUSAL_LM",
         )
     else:
@@ -78,10 +81,11 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
+            jit_mode_eval = True,
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
-            dataset_num_proc = 4,
+            dataset_num_proc = 8,
             dataloader_drop_last=True,
             gradient_accumulation_steps = 4,
             warmup_steps=2,
@@ -95,7 +99,8 @@ def training_process(
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'epoch',
-            report_to = None
+            report_to = None,
+            output_dir = checkpoint_save_dir
         ),
         peft_config=lora_config, # lora config
     )
