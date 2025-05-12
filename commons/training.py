@@ -4,6 +4,7 @@ from .model import get_model_tokenizer
 from .dataset import get_datasets
 
 def training_process(
+        pre_init: tuple,
         model_key:str, 
         data_version:str,
         ratio: float,
@@ -22,10 +23,13 @@ def training_process(
     from torchmetrics.functional.text.rouge import rouge_score
     from trl import SFTConfig, SFTTrainer
 
-    model, tokenizer, lora_config = get_model_tokenizer(
-        model_key = model_key,
-        distribution_type = distribution_type
-    )
+    if pre_init is None:
+        model, tokenizer, lora_config = get_model_tokenizer(
+            model_key = model_key,
+            distribution_type = distribution_type
+        )
+    else:
+        model, tokenizer, lora_config = pre_init
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
