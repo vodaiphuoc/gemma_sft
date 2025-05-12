@@ -97,7 +97,7 @@ def training_process(
         ),
         peft_config=lora_config, # lora config
     )
-
+    print('check: ', trainer.is_fsdp_xla_v2_enabled)
     print('start training')
     trainer.train()
     print('done training, saving model')
