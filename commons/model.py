@@ -1,4 +1,6 @@
 from .chat_template import adjust_tokenizer
+from .constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS, LORA_PARAMS
+
 from peft import LoraConfig
 from transformers import (
     AutoTokenizer,
@@ -7,24 +9,9 @@ from transformers import (
     PreTrainedModel
 )
 
-from typing import Tuple, Union, Literal
+from typing import Tuple, Union
 from types import NoneType
 
-MODEL_KEY2IDS = {
-    "bert": "google-bert/bert-base-uncased",
-    "gemma": "google/gemma-3-1b-it",
-    "gemma_unsloth": "unsloth/gemma-3-1b-it"
-}
-
-LORA_PARAMS = {
-    "r":16,
-    "lora_alpha": 32,
-    "lora_dropout": 0.05,
-    "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "down_proj"],
-    "task_type": "CAUSAL_LM"
-}
-
-DISTRIBUTION_TYPES = Literal["No","cuda","tpu"]
 
 def _get_pretrained_model(
         model_id:str, 

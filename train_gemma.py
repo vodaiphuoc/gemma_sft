@@ -1,6 +1,6 @@
 import os
 from commons.training import training_process
-from commons.model import DISTRIBUTION_TYPES, MODEL_KEY2IDS
+from commons.constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS
 import argparse
 
 def main(distribution_type: DISTRIBUTION_TYPES, model_key:str):
