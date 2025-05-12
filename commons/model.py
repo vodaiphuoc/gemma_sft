@@ -1,15 +1,13 @@
 from .chat_template import adjust_tokenizer
 from peft import LoraConfig
-from accelerate import PartialState
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedTokenizer,
     PreTrainedModel
 )
-from unsloth import FastLanguageModel
 
-from typing import Tuple, Union
+from typing import Tuple, Union, Literal
 from types import NoneType
 
 MODEL_KEY2IDS = {
@@ -26,17 +24,38 @@ LORA_PARAMS = {
     "task_type": "CAUSAL_LM"
 }
 
+DISTRIBUTION_TYPES = Literal["No","cuda","tpu"]
+
+def _get_pretrained_model(
+        model_id:str, 
+        distribution_type: DISTRIBUTION_TYPES
+    )->PreTrainedModel:
+    if distribution_type == "cuda":
+        from accelerate import PartialState
+        device_map={'':PartialState().process_index}
+    elif distribution_type == "tpu":
+        import torch_xla.core.xla_model as xm        
+        device_map={'':xm.xla_device()}
+    elif distribution_type == "No":
+        device_map=None
+        
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        attn_implementation='eager',
+        device_map=device_map
+    )
+    return model
+
 def get_model_tokenizer(
-        model_key:str = "gemma"
+        model_key:str = "gemma",
+        distribution_type: DISTRIBUTION_TYPES = "cuda"
     )->Tuple[PreTrainedModel, PreTrainedTokenizer,Union[LoraConfig, NoneType]]:
     
     if model_key == "gemma":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
-        device_string = PartialState().process_index
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_KEY2IDS[model_key],
-            attn_implementation='eager',
-            device_map={'':device_string}
+        model = _get_pretrained_model(
+            model_id= MODEL_KEY2IDS[model_key],
+            distribution_type = distribution_type
         )
         lora_config = LoraConfig(
             **LORA_PARAMS
@@ -44,17 +63,18 @@ def get_model_tokenizer(
         return model, tokenizer, lora_config
 
     elif model_key == "gemma_unsloth":
+        from unsloth import FastLanguageModel
         model, tokenizer = FastLanguageModel.from_pretrained(
             model_name= MODEL_KEY2IDS[model_key],
-            # max_seq_length=max_length,
         )
         model = FastLanguageModel.get_peft_model(model,**LORA_PARAMS)
         return model, tokenizer, None
 
     elif model_key == "bert":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_KEY2IDS[model_key]
+        model = _get_pretrained_model(
+            model_id= MODEL_KEY2IDS[model_key],
+            distribution_type = distribution_type
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
         return model, tokenizer, None

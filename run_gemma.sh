@@ -19,7 +19,11 @@ case "$1" in
             pip install -q -U -r dependencies/tpu_train_requirements.txt
 
             echo run train_gemma.py
-            accelerate launch --config_file config/gemma_tpu.yaml train_gemma.py
+            accelerate launch \
+                --config_file config/gemma_tpu.yaml \
+                train_gemma.py \
+                --distribution_type tpu \
+                --model_key gemma
 
         elif [ "${run_with_tpu}" == "false" ]; then
             echo setup dependencies in requirement
@@ -28,7 +32,11 @@ case "$1" in
             pip list
             
             echo run with gpu
-            accelerate launch --config_file config/gemma.yaml train_gemma.py
+            accelerate launch \
+                --config_file config/gemma.yaml \
+                train_gemma.py \
+                --distribution_type cuda \
+                --model_key gemma
         
         else
             echo unknow value of tpu option: "${run_with_tpu}"

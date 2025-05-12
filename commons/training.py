@@ -7,6 +7,7 @@ def training_process(
         model_key:str, 
         data_version:str,
         ratio: float,
+        distribution_type: str,
         checkpoint_save_dir:str,
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
@@ -15,7 +16,10 @@ def training_process(
     ):
     os.environ["ACCELERATE_USE_FSDP"]= "true"
     
-    model, tokenizer, lora_config = get_model_tokenizer(model_key = model_key)
+    model, tokenizer, lora_config = get_model_tokenizer(
+        model_key = model_key,
+        distribution_type = distribution_type
+    )
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
