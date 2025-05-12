@@ -14,9 +14,11 @@ case "$1" in
 
             # echo setup optimum-tpu for tpu
             # pip install optimum-tpu -qf https://storage.googleapis.com/libtpu-releases/index.html
+            pip install torch==2.7.0 'torch_xla[tpu]==2.7.0'
             
             echo setup dependencies in requirement
             # pip install -q -U -r dependencies/tpu_train_requirements.txt
+
             pip install -q peft
             echo run train_gemma.py
             accelerate launch \
