@@ -10,11 +10,9 @@ fsdp_config:
   fsdp_cpu_ram_efficient_loading: true
   fsdp_forward_prefetch: true
   fsdp_offload_params: false
-  fsdp_sharding_strategy: FULL_SHARD
   fsdp_state_dict_type: SHARDED_STATE_DICT
   fsdp_sync_module_states: true
   fsdp_use_orig_params: false
-  fsdp_version: 2
   xla: True,
   xla_fsdp_v2: True,
   xla_fsdp_grad_ckpt': True

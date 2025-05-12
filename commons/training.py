@@ -27,8 +27,6 @@ def training_process(
         distribution_type = distribution_type
     )
 
-    print('model type: ', type(model))
-
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
 
