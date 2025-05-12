@@ -12,7 +12,8 @@ def training_process(
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
         eval_batch_size:int = 8,
-        learning_rate: float = 2e-4
+        learning_rate: float = 2e-4,
+        fsdp_config = None,
     ):
     os.environ["ACCELERATE_USE_FSDP"]= "true"
     
@@ -60,7 +61,6 @@ def training_process(
     
     from trl import SFTConfig, SFTTrainer
 
-    print('check lora config: ', lora_config)
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
@@ -91,7 +91,8 @@ def training_process(
             label_names=["labels"],
             logging_strategy = 'epoch',
             report_to = None,
-            output_dir = checkpoint_save_dir
+            output_dir = checkpoint_save_dir,
+            fsdp_config = fsdp_config,
         ),
         peft_config=lora_config, # lora config
     )

@@ -17,12 +17,15 @@ def _get_pretrained_model(
         model_id:str, 
         distribution_type: DISTRIBUTION_TYPES
     )->PreTrainedModel:
+    r"""
+    Get pretrained model depend on `distribution_type`:
+        - in distribution on TPU, no device map used
+        - in distribution on GPUs, map device with `PartialState`
+    """
     if distribution_type == "cuda":
         from accelerate import PartialState
         device_map={'':PartialState().process_index}
     elif distribution_type == "tpu":
-        # import torch_xla.core.xla_model as xm
-        # device_map={'':xm.xla_device()}
         device_map=None
     elif distribution_type == "No":
         device_map=None

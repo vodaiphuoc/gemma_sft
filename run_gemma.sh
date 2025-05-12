@@ -10,30 +10,28 @@ case "$1" in
         run_with_tpu="$2"
 
         if [ "${run_with_tpu}" == "true" ]; then
+            # with TPU, use notebook lunch + latest version (1.7.0.dev0) and
+            # dont use accelerate launch
             echo run with tpu
 
-            # echo setup optimum-tpu for tpu
-            # pip install optimum-tpu -qf https://storage.googleapis.com/libtpu-releases/index.html
-            pip install torch==2.7.0 'torch_xla[tpu]==2.7.0'
+            echo setup sub dependencies in requirement
+            pip install -q -U -r dependencies/tpu_train_requirements.txt
+            pip install git+https://github.com/huggingface/accelerate
             
-            echo setup dependencies in requirement
-            # pip install -q -U -r dependencies/tpu_train_requirements.txt
-
-            pip install -q peft
             echo run train_gemma.py
-            accelerate launch \
-                --config_file config/gemma_tpu.yaml \
-                train_gemma.py \
+            python train_gemma.py \
                 --distribution_type tpu \
-                --model_key gemma
+                --model_key gemma \
+                --fsdp_config_path config/gemma_tpu.yaml
 
         elif [ "${run_with_tpu}" == "false" ]; then
-            echo setup dependencies in requirement
-
-            pip install -q -U -r dependencies/train_requirements.txt
-            pip list
-            
+            # with GPUs, use accelerate lunch with 1.6.0
             echo run with gpu
+
+            echo setup sub dependencies in requirement
+            pip install -q -U -r dependencies/train_requirements.txt
+            
+            echo run train_gemma.py
             accelerate launch \
                 --config_file config/gemma.yaml \
                 train_gemma.py \
