@@ -31,6 +31,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.distribution_type == "tpu":
+        os.environ['PJRT_DEVICE'] = 'TPU'
         from accelerate import notebook_launcher
         notebook_launcher(
             main,
