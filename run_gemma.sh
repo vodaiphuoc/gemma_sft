@@ -12,8 +12,13 @@ case "$1" in
         if [ "${run_with_tpu}" == "true" ]; then
             echo run with tpu
             
-            echo setup optimum-tpu for tpu
-            pip install optimum-tpu -qf https://storage.googleapis.com/libtpu-releases/index.html
+            pip install 'torch_xla[tpu] @ https://storage.googleapis.com/pytorch-xla-releases/wheels/tpuvm/torch_xla-2.8.0.dev-cp310-cp310-linux_x86_64.whl' \
+  -f https://storage.googleapis.com/libtpu-wheels/index.html
+
+
+
+            # echo setup optimum-tpu for tpu
+            # pip install optimum-tpu -qf https://storage.googleapis.com/libtpu-releases/index.html
             
             echo setup dependencies in requirement
             pip install -q -U -r dependencies/tpu_train_requirements.txt
