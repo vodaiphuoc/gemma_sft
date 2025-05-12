@@ -92,6 +92,7 @@ def training_process(
             logging_strategy = 'epoch',
             report_to = None,
             output_dir = checkpoint_save_dir,
+            fsdp = fsdp_config['fsdp_sharding_strategy'] if fsdp_config is not None else '',
             fsdp_config = fsdp_config,
         ),
         peft_config=lora_config, # lora config

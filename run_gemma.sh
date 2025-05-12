@@ -16,7 +16,7 @@ case "$1" in
 
             echo setup sub dependencies in requirement
             pip install -q -U -r dependencies/tpu_train_requirements.txt
-            pip install git+https://github.com/huggingface/accelerate
+            pip install -q git+https://github.com/huggingface/accelerate
             
             echo run train_gemma.py
             python train_gemma.py \
