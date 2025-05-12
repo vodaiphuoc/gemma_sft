@@ -60,7 +60,7 @@ def training_process(
         }
     
     from trl import SFTConfig, SFTTrainer
-    print('fsdp_config: ',fsdp_config)
+    
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
