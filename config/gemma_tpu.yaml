@@ -1,6 +1,7 @@
 compute_environment: LOCAL_MACHINE
 debug: false
-distributed_type: FSDP
+tpu: true
+distributed_type: XLA
 downcast_bf16: 'yes'
 enable_cpu_affinity: false
 fsdp_config:
