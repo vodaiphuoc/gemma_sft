@@ -19,16 +19,10 @@ case "$1" in
             pip install -q git+https://github.com/huggingface/accelerate
             
             echo run train_gemma.py
-            accelerate launch \
-                --config_file config/gemma_tpu.yaml \
-                train_gemma.py \
+            python train_gemma.py \
                 --distribution_type tpu \
-                --model_key gemma
-
-            # python train_gemma.py \
-            #     --distribution_type tpu \
-            #     --model_key gemma \
-            #     --fsdp_config_path config/gemma_tpu.yaml
+                --model_key gemma \
+                --fsdp_config_path config/gemma_tpu.yaml
 
         elif [ "${run_with_tpu}" == "false" ]; then
             # with GPUs, use accelerate lunch with 1.6.0
