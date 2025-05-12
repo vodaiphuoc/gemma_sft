@@ -42,5 +42,6 @@ if __name__ == '__main__':
     os.environ['PJRT_DEVICE'] = 'TPU'
     main(
         distribution_type = args.distribution_type,
-        model_key= args.model_key
+        model_key= args.model_key,
+        fsdp_config_path = args.fsdp_config_path
     )
