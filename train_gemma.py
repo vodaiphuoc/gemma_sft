@@ -7,8 +7,8 @@ import argparse
 def main(distribution_type: DISTRIBUTION_TYPES, model_key:str, fsdp_config_path:str):
     assert MODEL_KEY2IDS.get(model_key) is not None
     fsdp_config = get_fsdp_config_from_yaml(fsdp_config_path)
-    if distribution_type == "tpu":
-        assert fsdp_config is not None
+    # if distribution_type == "tpu":
+    #     assert fsdp_config is not None
 
     training_process(
         model_key = model_key, 
