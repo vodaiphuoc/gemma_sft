@@ -27,7 +27,7 @@ num_processes: 8
 rdzv_backend: static
 same_network: true
 tpu_env: []
-tpu_use_cluster: true
+tpu_use_cluster: false
 tpu_name: local
 tpu_use_sudo: false
 use_cpu: false
