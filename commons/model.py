@@ -26,8 +26,8 @@ def _get_pretrained_model(
         from accelerate import PartialState
         device_map={'':PartialState().process_index}
     elif distribution_type == "tpu":
-        device_map=None
-    elif distribution_type == "No":
+        device_map="auto"
+    else:
         device_map=None
         
     model = AutoModelForCausalLM.from_pretrained(

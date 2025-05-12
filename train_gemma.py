@@ -30,18 +30,17 @@ if __name__ == '__main__':
     parser.add_argument('--fsdp_config_path', type=str, default= "")
     args = parser.parse_args()
 
-    # if args.distribution_type == "tpu":
-    #     os.environ['PJRT_DEVICE'] = 'TPU'
-    #     from accelerate import notebook_launcher
-    #     notebook_launcher(
-    #         main,
-    #         (args.distribution_type,args.model_key, args.fsdp_config_path), 
-    #         num_processes = 8
-    #     )
-    # else:
-    os.environ['PJRT_DEVICE'] = 'TPU'
-    main(
-        distribution_type = args.distribution_type,
-        model_key= args.model_key,
-        fsdp_config_path = args.fsdp_config_path
-    )
+    if args.distribution_type == "tpu":
+        os.environ['PJRT_DEVICE'] = 'TPU'
+        from accelerate import notebook_launcher
+        notebook_launcher(
+            main,
+            (args.distribution_type,args.model_key, args.fsdp_config_path), 
+            num_processes = 8
+        )
+    else:
+        main(
+            distribution_type = args.distribution_type,
+            model_key= args.model_key,
+            fsdp_config_path = args.fsdp_config_path
+        )
