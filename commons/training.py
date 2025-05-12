@@ -97,8 +97,6 @@ def training_process(
         ),
         peft_config=lora_config, # lora config
     )
-    print('check wrapped model')
-    print(trainer.model_wrapped, type(trainer.model_wrapped))
 
     print('start training')
     trainer.train()
