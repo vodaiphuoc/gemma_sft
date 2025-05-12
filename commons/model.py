@@ -21,8 +21,9 @@ def _get_pretrained_model(
         from accelerate import PartialState
         device_map={'':PartialState().process_index}
     elif distribution_type == "tpu":
-        import torch_xla.core.xla_model as xm        
-        device_map={'':xm.xla_device()}
+        # import torch_xla.core.xla_model as xm
+        # device_map={'':xm.xla_device()}
+        device_map=None
     elif distribution_type == "No":
         device_map=None
         
