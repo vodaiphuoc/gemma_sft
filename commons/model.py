@@ -26,7 +26,10 @@ def _get_pretrained_model(
         from accelerate import PartialState
         device_map={'':PartialState().process_index}
     elif distribution_type == "tpu":
-        device_map="auto"
+        from accelerate import PartialState
+        device_map={'':PartialState().process_index}
+        print(device_map)
+        # device_map="auto"
     else:
         device_map=None
         
