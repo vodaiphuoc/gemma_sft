@@ -20,7 +20,7 @@ case "$1" in
             
             echo run train_gemma.py
             accelerate launch \
-                --config_file config/gemma.yaml \
+                --config_file config/gemma_tpu.yaml \
                 train_gemma.py \
                 --distribution_type tpu \
                 --model_key gemma
