@@ -26,6 +26,7 @@ num_machines: 1
 num_processes: 8
 rdzv_backend: static
 same_network: true
+tpu_cluster: true
 tpu_env: []
 tpu_name: local
 tpu_use_cluster: false
