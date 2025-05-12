@@ -17,6 +17,11 @@ def training_process(
     ):
     os.environ["ACCELERATE_USE_FSDP"]= "true"
     
+    import numpy as np
+    from torchmetrics.functional.text import bleu_score
+    from torchmetrics.functional.text.rouge import rouge_score
+    from trl import SFTConfig, SFTTrainer
+
     model, tokenizer, lora_config = get_model_tokenizer(
         model_key = model_key,
         distribution_type = distribution_type
@@ -24,9 +29,6 @@ def training_process(
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
-    import numpy as np
-    from torchmetrics.functional.text import bleu_score
-    from torchmetrics.functional.text.rouge import rouge_score
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
@@ -58,8 +60,6 @@ def training_process(
             "rouge2_fmeasure": rouge_value['rouge2_fmeasure'],
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
-    
-    from trl import SFTConfig, SFTTrainer
     
     trainer = SFTTrainer(
         model = model,
@@ -97,7 +97,7 @@ def training_process(
         ),
         peft_config=lora_config, # lora config
     )
-
+    print('check wrapped model')
     print(trainer.model_wrapped, type(trainer.model_wrapped))
 
     print('start training')
