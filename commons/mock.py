@@ -71,7 +71,7 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
 
         batch = super().torch_call(examples)
         print('batch: ', batch)
-        
+
         if self.instruction_template is None:
             for i in range(len(examples)):
                 response_token_ids_start_idx = None
@@ -102,7 +102,7 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
             for i in range(len(examples)):
                 response_token_ids_idxs = []
                 human_token_ids_idxs = []
-
+                print('check where: ', np.where(batch["labels"][i] == self.response_token_ids[0])[0])
                 for assistant_idx in np.where(batch["labels"][i] == self.response_token_ids[0])[0]:
                     # find the indexes of the start of a response.
                     if (
