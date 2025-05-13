@@ -59,11 +59,8 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
         print('check type of input examples: ',type(examples))
         print('check type of input example index 0: ',type(examples[0]))
 
-        try:
-            batch = super().torch_call(examples)
-        except Exception as e:
-            print('error in call super torch call in mock')
-
+        batch = super().torch_call(examples)
+        
         if self.instruction_template is None:
             for i in range(len(examples)):
                 response_token_ids_start_idx = None
