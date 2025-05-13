@@ -68,7 +68,6 @@ def training_process(
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
-        data_collator = DataCollatorForCompletionOnlyLM,
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
@@ -105,8 +104,8 @@ def training_process(
 
     print('start training')
     trainer.train()
-    # print('done training, saving model')
-    # trainer.save_model(checkpoint_save_dir)
+    print('done training, saving model')
+    trainer.save_model(checkpoint_save_dir)
     # print('run evaluate')
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)

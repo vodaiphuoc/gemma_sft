@@ -2,8 +2,7 @@ from typing import Literal
 
 MODEL_KEY2IDS = {
     "bert": "google-bert/bert-base-uncased",
-    "gemma": "google/gemma-3-1b-it",
-    "gemma_unsloth": "unsloth/gemma-3-1b-it"
+    "gemma": "google/gemma-3-1b-it"
 }
 
 LORA_PARAMS = {

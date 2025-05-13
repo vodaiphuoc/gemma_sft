@@ -8,7 +8,7 @@ from transformers import (
     PreTrainedTokenizer,
     PreTrainedModel
 )
-import torch
+
 from typing import Tuple, Union
 from types import NoneType
 
@@ -52,21 +52,6 @@ def get_model_tokenizer(
             **LORA_PARAMS
         )
         return model, tokenizer, lora_config
-
-    elif model_key == "gemma_unsloth":
-        from unsloth import FastLanguageModel
-        from accelerate import PartialState
-        
-        model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name= MODEL_KEY2IDS[model_key],
-            dtype = torch.float16,
-            load_in_4bit = False,
-            load_in_8bit = True,
-            max_seq_length = 128,
-            device_map={'':PartialState().process_index}
-        )
-        model = FastLanguageModel.get_peft_model(model,**LORA_PARAMS)
-        return model, tokenizer, None
 
     elif model_key == "bert":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
