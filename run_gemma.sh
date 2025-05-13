@@ -29,7 +29,7 @@ case "$1" in
             echo run with gpu
 
             echo setup sub dependencies in requirement
-            pip install -q -U -r dependencies/unsloth_requirements.txt
+            pip install -q -U -r dependencies/train_requirements.txt
             
             # echo check version after install
             # pip list
@@ -39,7 +39,7 @@ case "$1" in
                 --config_file config/gemma.yaml \
                 train_gemma.py \
                 --distribution_type cuda \
-                --model_key gemma_unsloth
+                --model_key gemma
         
         else
             echo unknow value of tpu option: "${run_with_tpu}"

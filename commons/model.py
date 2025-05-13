@@ -62,7 +62,7 @@ def get_model_tokenizer(
             dtype = torch.float16,
             load_in_4bit = False,
             load_in_8bit = True,
-            max_seq_length = 256,
+            max_seq_length = 128,
             device_map={'':PartialState().process_index}
         )
         model = FastLanguageModel.get_peft_model(model,**LORA_PARAMS)
