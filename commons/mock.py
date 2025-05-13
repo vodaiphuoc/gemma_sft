@@ -58,6 +58,10 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
     def torch_call(self, examples: list[Union[list[int], Any, dict[str, Any]]]) -> dict[str, Any]:
         print('check type of input examples: ',type(examples))
         print('check type of input example index 0: ',type(examples[0]))
+        print('key in one example: ',examples[0].keys())
+        for ith, exp in enumerate(examples):
+            for k, v in exp.items():
+                print(f'example {ith}, v shape:', len(v))
 
         batch = super().torch_call(examples)
         
