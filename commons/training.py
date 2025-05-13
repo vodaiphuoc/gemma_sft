@@ -97,6 +97,7 @@ def training_process(
             bf16_full_eval = True,
             max_length = 1024,
             packing = False,
+            pad_to_multiple_of = 128,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
