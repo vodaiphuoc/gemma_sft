@@ -29,11 +29,13 @@ case "$1" in
             echo run with gpu
 
             echo setup sub dependencies in requirement
+            pip install "unsloth==2025.3.18" "unsloth_zoo==2025.3.16"
             pip install -q -U -r dependencies/train_requirements.txt
+
             
             echo check version after install
             pip list
-            
+
             echo run train_gemma.py
             accelerate launch \
                 --config_file config/gemma.yaml \
