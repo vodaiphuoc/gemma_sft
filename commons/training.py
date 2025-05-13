@@ -35,19 +35,27 @@ def training_process(
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
-    def _formating_fnc(examples: List[dict])->List[str]:
+    def _formating_fnc(example: dict)->List[str]:
         r"""
         Convert `prompt` and `completion` into `text` field
         """
-        data = [_prompt + _comp
-        for _prompt, _comp in 
-        zip(examples['prompt'], examples['completion'])]
-
-        return tokenizer.apply_chat_template(
-            data, 
-            tokenize = False, 
-            add_generation_prompt = False
-        )
+        if isinstance(example):
+            return [tokenizer.apply_chat_template(
+                example['prompt'] + example['completion'], 
+                tokenize = False, 
+                add_generation_prompt = False
+            )]
+        else:
+            data = [
+                _prompt + _compl
+                for _prompt, _compl 
+                in zip(example['prompt'], example['completion'])
+            ]
+            return tokenizer.apply_chat_template(
+                data, 
+                tokenize = False, 
+                add_generation_prompt = False
+            )
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
