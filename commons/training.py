@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .constants import COLLATOR_RESP_TEMPLATE, COLLATOR_INST_TEMPLATE
@@ -35,17 +35,17 @@ def training_process(
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
-    def _formating_fnc(example: dict)->Dict[str,str]:
+    def _formating_fnc(example: dict)->List[str]:
         r"""
         Convert `prompt` and `completion` into `text` field
         """
-        return {
-            "text": tokenizer.apply_chat_template(
+        return [
+            tokenizer.apply_chat_template(
                 example["prompt"] + example["completion"],
                 tokenize = False,
                 add_generation_prompt = False
             )
-        } 
+        ]
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
