@@ -19,7 +19,6 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
             padding_free: bool = False,
             **kwargs,
         ):
-        print('pad_to_multiple_of in kwargs in mock: ', kwargs['pad_to_multiple_of'])
         super().__init__(*args, mlm=mlm, **kwargs)
         warnings.warn(
             "This class is deprecated and will be removed in version 0.20.0. To train on completion only, please use "
