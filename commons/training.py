@@ -95,8 +95,8 @@ def training_process(
             warmup_steps=2,
             # completion_only_loss = True, # removed for unsloth version
             learning_rate=learning_rate,
-            bf16=True,
-            bf16_full_eval = True,
+            fp16=True,
+            fp16_full_eval = True,
             # max_length = 1024, # removed for unsloth version
             packing = True,
             max_seq_length = 128,
