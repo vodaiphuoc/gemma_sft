@@ -42,6 +42,13 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
             # The user already provides the token ids
             self.response_token_ids = response_template
 
+        print('instruction tokens: ',self.instruction_token_ids)
+        print('response tokens: ',self.response_token_ids)
+
+        print('first value in instruction tokens: ',self.instruction_token_ids[0])
+        print('first value in response tokens: ',self.response_token_ids[0])
+
+
         if not self.mlm and self.instruction_template and self.tokenizer.pad_token_id == self.tokenizer.eos_token_id:
             warnings.warn(
                 "The pad_token_id and eos_token_id values of this tokenizer are identical. "
