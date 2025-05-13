@@ -29,7 +29,7 @@ case "$1" in
             echo run with gpu
 
             echo setup sub dependencies in requirement
-            pip install -q -U -r dependencies/unsloth_requirements.txt.txt
+            pip install -q -U -r dependencies/unsloth_requirements.txt
             
             echo check version after install
             pip list
