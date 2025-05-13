@@ -75,7 +75,9 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
 
         print('check decode')
         print(self.tokenizer.decode(batch['input_ids'][1]))
-        print(self.tokenizer.decode(batch['labels'][1]))
+
+        print(self.tokenizer.decode(torch.where(batch['labels'][1] == -100, self.tokenizer.pad_token_id, batch['labels'][1])))
+        print(batch['labels'][1])
 
 
         if self.instruction_template is None:
