@@ -15,3 +15,6 @@ LORA_PARAMS = {
 }
 
 DISTRIBUTION_TYPES = Literal["No","cuda","tpu"]
+
+COLLATOR_INST_TEMPLATE = "<bos><start_of_turn>user"
+COLLATOR_RESP_TEMPLATE = "<start_of_turn>model"

@@ -2,6 +2,7 @@ import os
 
 from .model import get_model_tokenizer
 from .dataset import get_datasets
+from .constants import COLLATOR_RESP_TEMPLATE, COLLATOR_INST_TEMPLATE
 
 def training_process(
         pre_init: tuple,
@@ -21,7 +22,7 @@ def training_process(
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig, SFTTrainer
+    from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -46,6 +47,7 @@ def training_process(
         if isinstance(preds, tuple):
             preds = preds[0]
     
+        print('check labels:', labels)
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
@@ -68,6 +70,10 @@ def training_process(
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
+        data_collator = DataCollatorForCompletionOnlyLM(
+            response_template = COLLATOR_RESP_TEMPLATE,
+            instruction_template = COLLATOR_INST_TEMPLATE
+        ),
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
@@ -84,12 +90,12 @@ def training_process(
             dataloader_drop_last=True,
             gradient_accumulation_steps = 8,
             warmup_steps=2,
-            completion_only_loss = True,
+            # completion_only_loss = True, # removed for unsloth version
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
             max_length = 1024,
-            packing = True,
+            packing = False,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
@@ -101,11 +107,11 @@ def training_process(
         ),
         peft_config=lora_config, # lora config
     )
-    print('check: ', trainer.is_fsdp_xla_v2_enabled)
-    print('start training')
-    trainer.train()
-    print('done training, saving model')
-    trainer.save_model(checkpoint_save_dir)
+
+    # print('start training')
+    # trainer.train()
+    # print('done training, saving model')
+    # trainer.save_model(checkpoint_save_dir)
     # print('run evaluate')
-    # output_metrics = trainer.evaluate(converted_testdata)
-    # print('output metrics: ', output_metrics)
+    output_metrics = trainer.evaluate()
+    print('output metrics: ', output_metrics)
