@@ -121,6 +121,9 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                         "calculation. Note, if this happens often, consider increasing the `max_length`.",
                         UserWarning,
                     )
+
+                    print('decode label: ',self.tokenizer.decode(batch['labels'][i]))
+
                     batch["labels"][i, :] = self.ignore_index
 
                 human_token_ids = self.instruction_token_ids
