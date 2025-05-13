@@ -3,6 +3,7 @@ import os
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .constants import COLLATOR_RESP_TEMPLATE, COLLATOR_INST_TEMPLATE
+from .mock import MockDataCollatorForCompletionOnlyLM
 
 def training_process(
         pre_init: tuple,
@@ -70,7 +71,7 @@ def training_process(
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
-        data_collator = DataCollatorForCompletionOnlyLM(
+        data_collator = MockDataCollatorForCompletionOnlyLM(
             response_template = COLLATOR_RESP_TEMPLATE,
             instruction_template = COLLATOR_INST_TEMPLATE,
             tokenizer = tokenizer,
