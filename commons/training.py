@@ -83,6 +83,7 @@ def training_process(
             dataset_num_proc = 4,
             dataloader_pin_memory = True,
             dataloader_drop_last=True,
+            dataloader_num_workers = 2,
             dataloader_prefetch_factor = 3,
             gradient_accumulation_steps = 8,
             warmup_steps=2,
