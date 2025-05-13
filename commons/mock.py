@@ -70,6 +70,7 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                 print(f'example {ith}, v shape:', len(v))
 
         batch = super().torch_call(examples)
+        print('batch: ', batch)
         
         if self.instruction_template is None:
             for i in range(len(examples)):
