@@ -113,10 +113,10 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                 
                 for assistant_idx in np.where(batch["labels"][i] == self.response_token_ids[0])[0]:
                     # find the indexes of the start of a response.
-                    print('check equal response token:')
-                    print(self.response_token_ids)
-                    print(batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist())
-                    print('-------------------------------------------')
+                    # print('check equal response token:')
+                    # print(self.response_token_ids)
+                    # print(batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist())
+                    # print('-------------------------------------------')
                     if (
                         self.response_token_ids
                         == batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist()
@@ -140,10 +140,10 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                 human_token_ids = self.instruction_token_ids
                 for human_idx in np.where(batch["labels"][i] == human_token_ids[0])[0]:
                     
-                    print('check equal response token:')
-                    print(human_token_ids)
-                    print(batch["labels"][i][human_idx : human_idx + len(human_token_ids)].tolist())
-                    print('-------------------------------------------')
+                    # print('check equal isntruct token:')
+                    # print(human_token_ids)
+                    # print(batch["labels"][i][human_idx : human_idx + len(human_token_ids)].tolist())
+                    # print('-------------------------------------------')
 
                     # find the indexes of the start of a human answer.
                     if human_token_ids == batch["labels"][i][human_idx : human_idx + len(human_token_ids)].tolist():

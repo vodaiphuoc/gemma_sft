@@ -133,8 +133,8 @@ def training_process(
         formatting_func = _formating_fnc
     )
 
-    # print('start training')
-    # trainer.train()
+    print('start training')
+    trainer.train()
     # print('done training, saving model')
     # trainer.save_model(checkpoint_save_dir)
     # print('run evaluate')
