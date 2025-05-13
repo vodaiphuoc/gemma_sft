@@ -62,22 +62,22 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
         self.padding_free = padding_free
 
     def torch_call(self, examples: list[Union[list[int], Any, dict[str, Any]]]) -> dict[str, Any]:
-        print('check type of input examples: ',type(examples))
-        print('check type of input example index 0: ',type(examples[0]))
-        print('check example 1:', examples[0])
-        print('key in one example: ',examples[0].keys())
-        for ith, exp in enumerate(examples):
-            for k, v in exp.items():
-                print(f'example {ith}, v shape:', len(v))
+        # print('check type of input examples: ',type(examples))
+        # print('check type of input example index 0: ',type(examples[0]))
+        # print('check example 1:', examples[0])
+        # print('key in one example: ',examples[0].keys())
+        # for ith, exp in enumerate(examples):
+        #     for k, v in exp.items():
+        #         print(f'example {ith}, v shape:', len(v))
 
         batch = super().torch_call(examples)
-        print('batch: ', batch)
+        # print('batch: ', batch)
 
-        print('check decode')
-        print(self.tokenizer.decode(batch['input_ids'][1]))
+        # print('check decode')
+        # print(self.tokenizer.decode(batch['input_ids'][1]))
 
-        print(self.tokenizer.decode(torch.where(batch['labels'][1] == -100, self.tokenizer.pad_token_id, batch['labels'][1])))
-        print(batch['labels'][1])
+        # print(self.tokenizer.decode(torch.where(batch['labels'][1] == -100, self.tokenizer.pad_token_id, batch['labels'][1])))
+        # print(batch['labels'][1])
 
 
         if self.instruction_template is None:
@@ -111,11 +111,12 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                 response_token_ids_idxs = []
                 human_token_ids_idxs = []
                 
-                print('check where: ', np.where(batch["labels"][i] == self.response_token_ids[0])[0])
-                print('check:', batch["labels"][i][1 : 1 + len(self.response_token_ids)].tolist())
-                
                 for assistant_idx in np.where(batch["labels"][i] == self.response_token_ids[0])[0]:
                     # find the indexes of the start of a response.
+                    print('check equal:')
+                    print(self.response_token_ids)
+                    print(batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist())
+                    print('-------------------------------------------')
                     if (
                         self.response_token_ids
                         == batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist()
