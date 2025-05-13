@@ -1,0 +1,7 @@
+trl==0.15.2
+peft
+transformers
+torchmetrics
+accelerate==1.6.0
+unsloth==2025.3.18
+unsloth_zoo==2025.3.16
