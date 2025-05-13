@@ -12,6 +12,9 @@ def main(
         fsdp_config_path:str,
         pre_init: tuple = None
     ):
+    if model_key == "gemma_unsloth":
+        from unsloth import FastLanguageModel
+    
     assert MODEL_KEY2IDS.get(model_key) is not None
     fsdp_config = get_fsdp_config_from_yaml(fsdp_config_path)
     if distribution_type == "tpu":

@@ -1,4 +1,4 @@
-trl==0.17.0
+trl
 peft
 transformers
 accelerate==1.6.0
@@ -6,4 +6,5 @@ torch
 torchvision 
 torchaudio
 torchmetrics
-unsloth
+"unsloth==2025.3.18" 
+"unsloth_zoo==2025.3.16"
