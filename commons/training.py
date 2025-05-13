@@ -1,5 +1,5 @@
 import os
-
+from typing import Dict
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .constants import COLLATOR_RESP_TEMPLATE, COLLATOR_INST_TEMPLATE
@@ -35,6 +35,17 @@ def training_process(
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
 
+    def _formating_fnc(example: dict)->Dict[str,str]:
+        r"""
+        Convert `prompt` and `completion` into `text` field
+        """
+        return {
+            "text": tokenizer.apply_chat_template(
+                example["prompt"] + example["completion"],
+                tokenize = False,
+                add_generation_prompt = False
+            )
+        } 
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
@@ -108,7 +119,8 @@ def training_process(
             fsdp = fsdp_config['fsdp_sharding_strategy'].lower() if fsdp_config is not None else '',
             fsdp_config = fsdp_config,
         ),
-        peft_config=lora_config, # lora config
+        peft_config=lora_config, # lora config,
+        formatting_func = _formating_fnc
     )
 
     # print('start training')
