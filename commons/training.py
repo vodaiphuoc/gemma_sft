@@ -39,7 +39,7 @@ def training_process(
         r"""
         Convert `prompt` and `completion` into `text` field
         """
-        if isinstance(example):
+        if isinstance(example, dict):
             return [tokenizer.apply_chat_template(
                 example['prompt'] + example['completion'], 
                 tokenize = False, 
