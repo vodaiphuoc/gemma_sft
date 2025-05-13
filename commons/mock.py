@@ -42,8 +42,8 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
             # The user already provides the token ids
             self.response_token_ids = response_template
 
-        print('instruction tokens: ',self.instruction_token_ids)
-        print('response tokens: ',self.response_token_ids)
+        print('instruction token_ids: ',self.instruction_token_ids)
+        print('response token_ids: ',self.response_token_ids)
 
         print('first value in instruction tokens: ',self.instruction_token_ids[0])
         print('first value in response tokens: ',self.response_token_ids[0])
@@ -102,7 +102,10 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
             for i in range(len(examples)):
                 response_token_ids_idxs = []
                 human_token_ids_idxs = []
+                
                 print('check where: ', np.where(batch["labels"][i] == self.response_token_ids[0])[0])
+                print('check:', batch["labels"][i][1 : 1 + len(self.response_token_ids)].tolist())
+                
                 for assistant_idx in np.where(batch["labels"][i] == self.response_token_ids[0])[0]:
                     # find the indexes of the start of a response.
                     if (
