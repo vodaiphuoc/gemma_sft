@@ -2,8 +2,6 @@ import os
 from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
-from .constants import COLLATOR_RESP_TEMPLATE, COLLATOR_INST_TEMPLATE
-from .mock import MockDataCollatorForCompletionOnlyLM
 
 def training_process(
         pre_init: tuple,
@@ -34,28 +32,6 @@ def training_process(
         model, tokenizer, lora_config = pre_init
 
     converted_traindata, converted_validdata, converted_testdata = get_datasets(data_version, ratio)
-
-    def _formating_fnc(example: dict)->List[str]:
-        r"""
-        Convert `prompt` and `completion` into `text` field
-        """
-        if isinstance(example, dict):
-            return [tokenizer.apply_chat_template(
-                example['prompt'] + example['completion'], 
-                tokenize = False, 
-                add_generation_prompt = False
-            )]
-        else:
-            data = [
-                _prompt + _compl
-                for _prompt, _compl 
-                in zip(example['prompt'], example['completion'])
-            ]
-            return tokenizer.apply_chat_template(
-                data, 
-                tokenize = False, 
-                add_generation_prompt = False
-            )
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
@@ -92,12 +68,7 @@ def training_process(
     trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
-        data_collator = MockDataCollatorForCompletionOnlyLM(
-            response_template = COLLATOR_RESP_TEMPLATE,
-            instruction_template = COLLATOR_INST_TEMPLATE,
-            tokenizer = tokenizer,
-            # pad_to_multiple_of = 256,
-        ),
+        data_collator = DataCollatorForCompletionOnlyLM,
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
@@ -114,11 +85,11 @@ def training_process(
             dataloader_drop_last=True,
             gradient_accumulation_steps = 8,
             warmup_steps=2,
-            # completion_only_loss = True, # removed for unsloth version
+            completion_only_loss = True,
             learning_rate=learning_rate,
             fp16=True,
             fp16_full_eval = True,
-            # max_length = 1024, # removed for unsloth version
+            max_length = 1024,
             packing = True,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
@@ -129,8 +100,7 @@ def training_process(
             fsdp = fsdp_config['fsdp_sharding_strategy'].lower() if fsdp_config is not None else '',
             fsdp_config = fsdp_config,
         ),
-        peft_config=lora_config, # lora config,
-        formatting_func = _formating_fnc
+        peft_config=lora_config, # lora config
     )
 
     print('start training')

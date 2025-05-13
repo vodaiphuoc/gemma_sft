@@ -1,6 +1,7 @@
 import os
 import argparse
 from commons.constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS
+from commons.model import get_model_tokenizer
 
 def main(
         distribution_type: DISTRIBUTION_TYPES, 
@@ -36,10 +37,6 @@ if __name__ == '__main__':
     parser.add_argument('--model_key', type=str)
     parser.add_argument('--fsdp_config_path', type=str, default= "")
     args = parser.parse_args()
-
-    if args.model_key == "gemma_unsloth":
-        from unsloth import FastLanguageModel
-    from commons.model import get_model_tokenizer
     
     if args.distribution_type == "tpu":
         model, tokenizer, lora_config = get_model_tokenizer(
