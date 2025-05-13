@@ -71,9 +71,9 @@ def training_process(
         model = model,
         processing_class = tokenizer,
         data_collator = DataCollatorForCompletionOnlyLM(
-            tokenizer,
             response_template = COLLATOR_RESP_TEMPLATE,
-            instruction_template = COLLATOR_INST_TEMPLATE
+            instruction_template = COLLATOR_INST_TEMPLATE,
+            tokenizer = tokenizer,
         ),
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
