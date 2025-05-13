@@ -113,7 +113,7 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                 
                 for assistant_idx in np.where(batch["labels"][i] == self.response_token_ids[0])[0]:
                     # find the indexes of the start of a response.
-                    print('check equal:')
+                    print('check equal response token:')
                     print(self.response_token_ids)
                     print(batch["labels"][i][assistant_idx : assistant_idx + len(self.response_token_ids)].tolist())
                     print('-------------------------------------------')
@@ -124,32 +124,36 @@ class MockDataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                         response_token_ids_idxs.append(assistant_idx + len(self.response_token_ids))
 
                 if len(response_token_ids_idxs) == 0:
-                    warnings.warn(
+                    print(
                         f"Could not find response key `{self.response_template}` in the following instance: "
                         f"{self.tokenizer.decode(batch['input_ids'][i])}. This instance will be ignored in loss "
                         "calculation. Note, if this happens often, consider increasing the `max_length`.",
-                        UserWarning,
                     )
-                    warnings.warn(
+                    print(
                         f"""decode label:{self.tokenizer.decode(batch['labels'][i])}
 ------------------------------------------------------------
-""",UserWarning
+"""
                     )
 
                     batch["labels"][i, :] = self.ignore_index
 
                 human_token_ids = self.instruction_token_ids
                 for human_idx in np.where(batch["labels"][i] == human_token_ids[0])[0]:
+                    
+                    print('check equal response token:')
+                    print(human_token_ids)
+                    print(batch["labels"][i][human_idx : human_idx + len(human_token_ids)].tolist())
+                    print('-------------------------------------------')
+
                     # find the indexes of the start of a human answer.
                     if human_token_ids == batch["labels"][i][human_idx : human_idx + len(human_token_ids)].tolist():
                         human_token_ids_idxs.append(human_idx)
 
                 if len(human_token_ids_idxs) == 0:
-                    warnings.warn(
+                    print(
                         f"Could not find instruction key `{self.instruction_template}` in the following instance: "
                         f"{self.tokenizer.decode(batch['input_ids'][i])}. This instance will be ignored in loss "
                         "calculation. Note, if this happens often, consider increasing the `max_length`.",
-                        UserWarning,
                     )
                     batch["labels"][i, :] = self.ignore_index
 
