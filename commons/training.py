@@ -46,11 +46,13 @@ def training_process(
                 add_generation_prompt = False
             )]
         else:
+            print('run batch')
             data = [
                 _prompt + _compl
                 for _prompt, _compl 
                 in zip(example['prompt'], example['completion'])
             ]
+            print('data: ',data)
             return tokenizer.apply_chat_template(
                 data, 
                 tokenize = False, 
