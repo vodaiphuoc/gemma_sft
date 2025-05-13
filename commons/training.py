@@ -120,7 +120,7 @@ def training_process(
             fp16_full_eval = True,
             # max_length = 1024, # removed for unsloth version
             packing = True,
-            max_seq_length = 128,
+            max_seq_length = 256,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'epoch',
