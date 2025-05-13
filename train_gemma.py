@@ -1,10 +1,6 @@
 import os
-
-from commons.model import get_model_tokenizer
-from commons.training import training_process
-from commons.constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS
-from commons.utils import get_fsdp_config_from_yaml
 import argparse
+from commons.constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS
 
 def main(
         distribution_type: DISTRIBUTION_TYPES, 
@@ -12,9 +8,9 @@ def main(
         fsdp_config_path:str,
         pre_init: tuple = None
     ):
-    if model_key == "gemma_unsloth":
-        from unsloth import FastLanguageModel
-    
+    from commons.training import training_process
+    from commons.utils import get_fsdp_config_from_yaml
+
     assert MODEL_KEY2IDS.get(model_key) is not None
     fsdp_config = get_fsdp_config_from_yaml(fsdp_config_path)
     if distribution_type == "tpu":
@@ -41,6 +37,10 @@ if __name__ == '__main__':
     parser.add_argument('--fsdp_config_path', type=str, default= "")
     args = parser.parse_args()
 
+    if args.model_key == "gemma_unsloth":
+        from unsloth import FastLanguageModel
+    from commons.model import get_model_tokenizer
+    
     if args.distribution_type == "tpu":
         model, tokenizer, lora_config = get_model_tokenizer(
             model_key= args.model_key,

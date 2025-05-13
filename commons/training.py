@@ -97,7 +97,7 @@ def training_process(
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 1024,
+            # max_length = 1024, # removed for unsloth version
             packing = True,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
