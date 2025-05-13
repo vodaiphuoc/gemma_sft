@@ -8,7 +8,7 @@ from transformers import (
     PreTrainedTokenizer,
     PreTrainedModel
 )
-
+import torch
 from typing import Tuple, Union
 from types import NoneType
 
@@ -57,6 +57,9 @@ def get_model_tokenizer(
         from unsloth import FastLanguageModel
         model, tokenizer = FastLanguageModel.from_pretrained(
             model_name= MODEL_KEY2IDS[model_key],
+            dtype = torch.float16,
+            load_in_4bit = False,
+            max_seq_length = 256,
         )
         model = FastLanguageModel.get_peft_model(model,**LORA_PARAMS)
         return model, tokenizer, None
