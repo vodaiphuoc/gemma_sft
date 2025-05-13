@@ -55,11 +55,15 @@ def get_model_tokenizer(
 
     elif model_key == "gemma_unsloth":
         from unsloth import FastLanguageModel
+        from accelerate import PartialState
+        
         model, tokenizer = FastLanguageModel.from_pretrained(
             model_name= MODEL_KEY2IDS[model_key],
             dtype = torch.float16,
             load_in_4bit = False,
+            load_in_8bit = True,
             max_seq_length = 256,
+            device_map={'':PartialState().process_index}
         )
         model = FastLanguageModel.get_peft_model(model,**LORA_PARAMS)
         return model, tokenizer, None
