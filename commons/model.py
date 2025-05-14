@@ -9,7 +9,7 @@ from transformers import (
     PreTrainedModel,
     BitsAndBytesConfig
 )
-
+import torch
 from typing import Tuple, Union
 from types import NoneType
 
@@ -34,9 +34,14 @@ def _get_pretrained_model(
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         attn_implementation='eager',
-        # load_in_8bit=True,
+        torch_dtype=torch.bfloat16,
         device_map=device_map,
-        quantization_config = BitsAndBytesConfig(load_in_8bit=True)
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_quant_storage=torch.bfloat16
+        )
     )
     return model
 
