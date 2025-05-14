@@ -62,9 +62,10 @@ def get_model_tokenizer(
 
     elif model_key == "bert":
         tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
-        model = _get_pretrained_model(
-            model_id= MODEL_KEY2IDS[model_key],
-            distribution_type = distribution_type
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_KEY2IDS[model_key],
+            attn_implementation='eager',
+            torch_dtype=torch.bfloat16,
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
         return model, tokenizer, None
