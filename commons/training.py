@@ -21,7 +21,7 @@ def training_process(
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
+    from trl import SFTConfig, SFTTrainer
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -51,7 +51,7 @@ def training_process(
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
         
-        print('check decode labels: ',decoded_labels[0])
+        print('check decode labels: ',tokenizer.batch_decode(labels, skip_special_tokens=False)[0])
 
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
@@ -77,7 +77,7 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
-            # jit_mode_eval = True,
+            jit_mode_eval = True,
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
@@ -92,8 +92,8 @@ def training_process(
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 1024,
-            packing = False,
+            max_length = 128,
+            packing = False,   # packing is False to get completion_mask for `DataCollatorForLanguageModeling`
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
