@@ -6,8 +6,6 @@ import numpy as np
 import torch
 
 import copy
-import logging
-logger = logging.get_logger(__name__)
 
 from accelerate.utils import (
         AutocastKwargs
@@ -22,7 +20,7 @@ class MockTrainer(SFTTrainer):
         print('running mock torch_jit_model_eval')
         if not training:
             if dataloader is None:
-                logger.warning("failed to use PyTorch jit mode due to current dataloader is none.")
+                print("failed to use PyTorch jit mode due to current dataloader is none.")
                 return model
             example_batch = next(iter(dataloader))
             example_batch = self._prepare_inputs(example_batch)
@@ -45,7 +43,7 @@ class MockTrainer(SFTTrainer):
                             strict=False,
                         )
             except (RuntimeError, TypeError, ValueError, NameError, IndexError) as e:
-                logger.warning(f"1) failed to use PyTorch jit mode due to: {e}.")
+                print(f"1) failed to use PyTorch jit mode due to: {e}.")
 
             try:
                 jit_model = torch.jit.freeze(jit_model)
@@ -55,6 +53,6 @@ class MockTrainer(SFTTrainer):
                 model = jit_model
                 self.use_cpu_amp = False
             except (RuntimeError, TypeError, ValueError, NameError, IndexError) as e:
-                logger.warning(f"2) failed to use PyTorch jit mode due to: {e}.")
+                print(f"2) failed to use PyTorch jit mode due to: {e}.")
 
         return model
