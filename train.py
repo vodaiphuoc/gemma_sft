@@ -11,6 +11,7 @@ def main(
         eval_batch_size: int,
         pre_init: tuple = None
     ):
+    print('train_batch_size: ',train_batch_size, type(train_batch_size))
     print('run training for model: ', model_key)
     from commons.training import training_process
     from commons.utils import get_fsdp_config_from_yaml
