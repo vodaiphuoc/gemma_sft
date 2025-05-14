@@ -51,8 +51,6 @@ def training_process(
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
         
-        print('check decode labels: ',tokenizer.batch_decode(labels, skip_special_tokens=False)[0])
-
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
@@ -113,11 +111,3 @@ def training_process(
     # print('run evaluate')
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
-
-
-    print('debugging-----------------')
-    loader = trainer.get_train_dataloader()
-
-    example = next(iter(loader))
-    print('example')
-    print(example)
