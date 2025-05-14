@@ -28,7 +28,9 @@ case "$1" in
                 --config_file config/bert.yaml \
                 train.py \
                 --distribution_type cuda \
-                --model_key bert
+                --model_key bert \
+                --train_batch_size 64 \
+                --eval_batch_size 64
         
         else
             echo unknow value of tpu option: "${run_with_tpu}"

@@ -39,7 +39,9 @@ case "$1" in
                 --config_file config/gemma.yaml \
                 train.py \
                 --distribution_type cuda \
-                --model_key gemma
+                --model_key gemma \
+                --train_batch_size 12 \
+                --eval_batch_size 12
         
         else
             echo unknow value of tpu option: "${run_with_tpu}"

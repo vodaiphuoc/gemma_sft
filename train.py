@@ -7,6 +7,8 @@ def main(
         distribution_type: DISTRIBUTION_TYPES, 
         model_key:str, 
         fsdp_config_path:str,
+        train_batch_size: int, 
+        eval_batch_size: int,
         pre_init: tuple = None
     ):
     print('run training for model: ', model_key)
@@ -17,7 +19,7 @@ def main(
     fsdp_config = get_fsdp_config_from_yaml(fsdp_config_path)
     if distribution_type == "tpu":
         assert fsdp_config is not None
-    print('fsdp_config: ', fsdp_config)
+    
     training_process(
         pre_init = pre_init,
         model_key = model_key, 
@@ -26,8 +28,8 @@ def main(
         distribution_type = distribution_type,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         num_train_epochs = 3,
-        train_batch_size = 12,
-        eval_batch_size = 12,
+        train_batch_size = train_batch_size,
+        eval_batch_size = eval_batch_size,
         learning_rate = 1e-5,
         fsdp_config = fsdp_config
     )
@@ -36,6 +38,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--distribution_type', type=str)
     parser.add_argument('--model_key', type=str)
+    parser.add_argument('--train_batch_size', type=int, default= 12)
+    parser.add_argument('--eval_batch_size', type=int, default= 12)
     parser.add_argument('--fsdp_config_path', type=str, default= "")
     args = parser.parse_args()
     
@@ -61,5 +65,7 @@ if __name__ == '__main__':
         main(
             distribution_type = args.distribution_type,
             model_key= args.model_key,
-            fsdp_config_path = args.fsdp_config_path
+            fsdp_config_path = args.fsdp_config_path,
+            train_batch_size = args.train_batch_size, 
+            eval_batch_size = args.eval_batch_size,
         )
