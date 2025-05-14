@@ -35,7 +35,7 @@ def _get_pretrained_model(
         model_id,
         attn_implementation='eager',
         torch_dtype=torch.bfloat16,
-        # device_map="auto",
+        device_map="cpu",
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
