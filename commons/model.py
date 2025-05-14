@@ -6,7 +6,8 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedTokenizer,
-    PreTrainedModel
+    PreTrainedModel,
+    BitsAndBytesConfig
 )
 
 from typing import Tuple, Union
@@ -34,7 +35,8 @@ def _get_pretrained_model(
         model_id,
         attn_implementation='eager',
         load_in_8bit=True,
-        device_map=device_map
+        device_map=device_map,
+        quantization_config = BitsAndBytesConfig(load_in_8bit=True)
     )
     return model
 
