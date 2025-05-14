@@ -25,6 +25,7 @@ class MockTrainer(SFTTrainer):
             example_batch = next(iter(dataloader))
             example_batch = self._prepare_inputs(example_batch)
             
+            print('model type before copy: ', model,type(model))
             jit_model = copy.copy(model)
             jit_model.eval()
             original_forward = jit_model.__dict__.pop("_original_forward", None)
