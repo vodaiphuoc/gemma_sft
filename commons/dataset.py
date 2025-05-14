@@ -11,11 +11,11 @@ def get_datasets(version:str = "2_0", ratio: float = None):
         valdata = valdata.select(list(range(int(len(valdata)*ratio ))))
         testdata = testdata.select(list(range(int(len(testdata)*ratio ))))
 
-#     print(f"""
-# - load data version {version}
-# - ratio: {ratio}
-# - train size: {len(traindata)}
-# - valid size: {len(valdata)}
-# - test size: {len(testdata)}
-# """)
+    print(f"""
+- load data version {version}
+- ratio: {ratio}
+- train size: {len(traindata)}
+- valid size: {len(valdata)}
+- test size: {len(testdata)}
+""")
     return traindata, valdata, testdata
