@@ -1,4 +1,4 @@
-from .chat_template import adjust_tokenizer
+from .special_tokens import adjust_tokenizer
 from .constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS, LORA_PARAMS
 
 from peft import LoraConfig
@@ -12,7 +12,7 @@ from transformers import (
 import torch
 from typing import Tuple, Union
 from types import NoneType
-
+import os
 
 def _get_pretrained_model(
         model_id:str, 
@@ -61,7 +61,7 @@ def get_model_tokenizer(
         return model, tokenizer, lora_config
 
     elif model_key == "bert":
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
+        tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
         model = _get_pretrained_model(
             model_id= MODEL_KEY2IDS[model_key],
             distribution_type = distribution_type
