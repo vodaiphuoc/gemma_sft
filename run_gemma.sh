@@ -18,8 +18,8 @@ case "$1" in
             pip install -q -U -r dependencies/tpu_train_requirements.txt
             pip install -q git+https://github.com/huggingface/accelerate
             
-            echo run train_gemma.py
-            python train_gemma.py \
+            echo run train.py
+            python train.py \
                 --distribution_type tpu \
                 --model_key gemma \
                 --fsdp_config_path config/gemma_tpu.yaml
@@ -34,10 +34,10 @@ case "$1" in
             # echo check version after install
             # pip list
 
-            echo run train_gemma.py
+            echo run train.py
             accelerate launch \
                 --config_file config/gemma.yaml \
-                train_gemma.py \
+                train.py \
                 --distribution_type cuda \
                 --model_key gemma
         
