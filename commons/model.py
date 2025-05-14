@@ -64,7 +64,6 @@ def get_model_tokenizer(
         tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_KEY2IDS[model_key],
-            attn_implementation='eager'
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
         return model, tokenizer, None

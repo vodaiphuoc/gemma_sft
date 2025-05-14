@@ -17,7 +17,7 @@ def main(
     fsdp_config = get_fsdp_config_from_yaml(fsdp_config_path)
     if distribution_type == "tpu":
         assert fsdp_config is not None
-
+    print('fsdp_config: ', fsdp_config)
     training_process(
         pre_init = pre_init,
         model_key = model_key, 
