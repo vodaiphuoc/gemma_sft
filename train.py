@@ -11,8 +11,7 @@ def main(
         eval_batch_size: int,
         pre_init: tuple = None
     ):
-    print('train_batch_size: ',train_batch_size, type(train_batch_size))
-    print('run training for model: ', model_key)
+    
     from commons.training import training_process
     from commons.utils import get_fsdp_config_from_yaml
 
@@ -25,7 +24,7 @@ def main(
         pre_init = pre_init,
         model_key = model_key, 
         data_version = "2_0",
-        ratio = 0.01,
+        ratio = 0.1,
         distribution_type = distribution_type,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         num_train_epochs = 3,
