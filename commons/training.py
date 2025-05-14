@@ -88,8 +88,8 @@ def training_process(
             warmup_steps=2,
             completion_only_loss = True,
             learning_rate=learning_rate,
-            bf16=True if model_key == "gemma" else False,
-            bf16_full_eval = True if model_key == "gemma" else False,
+            bf16=True,
+            bf16_full_eval = True,
             max_length = 128,
             packing = False,   # packing is False to get completion_mask for `DataCollatorForLanguageModeling`
             max_seq_length = 128,
@@ -106,8 +106,8 @@ def training_process(
 
     print('start training')
     trainer.train()
-    print('done training, saving model')
-    trainer.save_model(checkpoint_save_dir)
     # print('run evaluate')
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
+    print('done training, saving model')
+    trainer.save_model(checkpoint_save_dir)
