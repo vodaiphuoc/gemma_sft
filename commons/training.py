@@ -93,7 +93,7 @@ def training_process(
             bf16=True,
             bf16_full_eval = True,
             max_length = 1024,
-            packing = True,
+            packing = False,
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
