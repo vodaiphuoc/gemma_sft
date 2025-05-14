@@ -24,18 +24,21 @@ class MockTrainer(SFTTrainer):
                 return model
             example_batch = next(iter(dataloader))
             example_batch = self._prepare_inputs(example_batch)
+            
+            jit_model = copy.copy(model)
+            jit_model.eval()
+            original_forward = jit_model.__dict__.pop("_original_forward", None)
+            # remove mixed precision hooks from the model
+            if original_forward:
+                jit_model.forward = original_forward
+            autocast_handler = AutocastKwargs(cache_enabled=False)
+            print('jit_model: ', jit_model)
+
             try:
-                jit_model = copy.copy(model)
-                jit_model.eval()
-                original_forward = jit_model.__dict__.pop("_original_forward", None)
-                # remove mixed precision hooks from the model
-                if original_forward:
-                    jit_model.forward = original_forward
-                autocast_handler = AutocastKwargs(cache_enabled=False)
                 with self.accelerator.autocast(autocast_handler=autocast_handler), torch.no_grad():
                     if isinstance(example_batch, dict):
                         jit_model = torch.jit.trace(jit_model, example_kwarg_inputs=example_batch, strict=False)
-                        print('jit_model: ', jit_model)
+                        
                     else:
                         jit_model = torch.jit.trace(
                             jit_model,
