@@ -34,7 +34,7 @@ def _get_pretrained_model(
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         attn_implementation='eager',
-        load_in_8bit=True,
+        # load_in_8bit=True,
         device_map=device_map,
         quantization_config = BitsAndBytesConfig(load_in_8bit=True)
     )
