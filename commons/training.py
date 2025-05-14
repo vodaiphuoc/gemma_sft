@@ -2,6 +2,7 @@ import os
 from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
+from .mock import MockTrainer
 
 def training_process(
         pre_init: tuple,
@@ -66,7 +67,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
