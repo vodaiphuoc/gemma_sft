@@ -7,7 +7,7 @@ fsdp_config:
   fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP
   fsdp_transformer_layer_cls_to_wrap: Gemma3DecoderLayer
   fsdp_backward_prefetch: BACKWARD_PRE
-  fsdp_cpu_ram_efficient_loading: true
+  fsdp_cpu_ram_efficient_loading: false
   fsdp_forward_prefetch: true
   fsdp_offload_params: false
   fsdp_sharding_strategy: FULL_SHARD
@@ -17,7 +17,7 @@ fsdp_config:
   fsdp_version: 2
 machine_rank: 0
 main_training_function: main
-mixed_precision: 'no'
+mixed_precision: 'bf16'
 num_machines: 1
 num_processes: 2
 rdzv_backend: static
