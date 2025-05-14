@@ -1,7 +1,7 @@
 trl==0.17.0
 peft
 transformers
-accelerate==1.6.0
+accelerate
 torch
 torchvision 
 torchaudio
