@@ -21,4 +21,7 @@ def adjust_tokenizer(model, tokenizer):
     model.generation_config.eos_token_id = tokenizer.eos_token_id
     model.generation_config.pad_token_id = tokenizer.pad_token_id
 
+    num_added_tokens = tokenizer.add_tokens(["<start_of_turn>", "<end_of_turn>"])
+    print("added", num_added_tokens, "tokens")
+    model.resize_token_embeddings(len(tokenizer))
     return model, tokenizer
