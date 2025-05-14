@@ -9,6 +9,7 @@ def main(
         fsdp_config_path:str,
         pre_init: tuple = None
     ):
+    print('run training for model: ', model_key)
     from commons.training import training_process
     from commons.utils import get_fsdp_config_from_yaml
 
