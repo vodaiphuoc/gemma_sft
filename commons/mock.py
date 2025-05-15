@@ -13,6 +13,7 @@ class MockSFTTrainer(SFTTrainer):
         super().__init__(*args, **kwargs)
     
     def _wrap_model(self, *args, **kwargs):
+        print('self.is_fsdp_xla_v2_enabled: ', self.is_fsdp_xla_v2_enabled)
         if len(args) > 0:
             for _arg in args:
                 print('arg: ',_arg, ', type: ', type(_arg))
@@ -25,4 +26,5 @@ class MockSFTTrainer(SFTTrainer):
 
         use_accelerator_prepare = True if model is self.model else False
         print('check use_accelerator_prepare: ', use_accelerator_prepare)
+        print('self.is_fsdp_enabled: ', self.is_fsdp_enabled)
         return model
