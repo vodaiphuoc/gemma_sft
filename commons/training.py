@@ -104,10 +104,12 @@ def training_process(
         peft_config=lora_config, # lora config
     )
 
-    print('start training')
-    trainer.train()
-    # print('run evaluate')
-    output_metrics = trainer.evaluate()
-    print('output metrics: ', output_metrics)
-    print('done training, saving model')
-    trainer.save_model(checkpoint_save_dir)
+    print('check xla fsdp v2: ',trainer.args.fsdp_config.get("xla_fsdp_v2"))
+
+    # print('start training')
+    # trainer.train()
+    # # print('run evaluate')
+    # output_metrics = trainer.evaluate()
+    # print('output metrics: ', output_metrics)
+    # print('done training, saving model')
+    # trainer.save_model(checkpoint_save_dir)
