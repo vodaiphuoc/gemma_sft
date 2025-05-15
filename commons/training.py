@@ -2,6 +2,7 @@ import os
 from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
+from .mock import MockSFTTrainer
 
 def training_process(
         pre_init: tuple,
@@ -64,7 +65,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -106,8 +107,8 @@ def training_process(
 
     print('check xla fsdp v2: ',trainer.args.fsdp_config.get("xla_fsdp_v2"))
 
-    # print('start training')
-    # trainer.train()
+    print('start training')
+    trainer.train()
     # # print('run evaluate')
     # output_metrics = trainer.evaluate()
     # print('output metrics: ', output_metrics)
