@@ -16,10 +16,10 @@ class MockSFTTrainer(SFTTrainer):
         print('self.is_fsdp_xla_v2_enabled: ', self.is_fsdp_xla_v2_enabled)
         if len(args) > 0:
             for _arg in args:
-                print('arg: ',_arg, ', type: ', type(_arg))
+                print('arg type: ', type(_arg))
         if len(kwargs) > 0:
             for _kwarg in kwargs:
-                print('kwarg: ',_kwarg, ', type: ', type(_kwarg))
+                print('kwarg type: ', type(_kwarg))
         
         model = super()._wrap_model(*args, **kwargs)
         print('result: ', model)
