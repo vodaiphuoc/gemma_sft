@@ -109,8 +109,8 @@ def training_process(
 
     print('start training')
     trainer.train()
-    # # print('run evaluate')
-    # output_metrics = trainer.evaluate()
+    print('run evaluate')
+    output_metrics = trainer.evaluate()
     # print('output metrics: ', output_metrics)
     # print('done training, saving model')
     # trainer.save_model(checkpoint_save_dir)
