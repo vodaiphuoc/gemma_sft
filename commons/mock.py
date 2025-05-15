@@ -18,11 +18,14 @@ class MockSFTTrainer(SFTTrainer):
             for _arg in args:
                 print('arg type: ', type(_arg))
         if len(kwargs) > 0:
-            for _kwarg in kwargs:
-                print('kwarg type: ', type(_kwarg))
+            for _k, _v in kwargs.items():
+                if "training" == _k:
+                    print(_k,_v)
+                else:
+                    print('kwarg type: ', type(_k), type(_v))
         
         model = super()._wrap_model(*args, **kwargs)
-        print('result: ', model)
+        print('result model type: ', type(model))
 
         use_accelerator_prepare = True if model is self.model else False
         print('check use_accelerator_prepare: ', use_accelerator_prepare)
@@ -31,5 +34,5 @@ class MockSFTTrainer(SFTTrainer):
 
 
     def torch_jit_model_eval(self, *args, **kwargs):
-        print('model input to torch_jit_model_eval func: ', args[0], type(args[0]))
+        print('model input to torch_jit_model_eval func type: ', type(args[0]))
         return super().torch_jit_model_eval(*args, **kwargs)
