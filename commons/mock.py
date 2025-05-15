@@ -28,3 +28,8 @@ class MockSFTTrainer(SFTTrainer):
         print('check use_accelerator_prepare: ', use_accelerator_prepare)
         print('self.is_fsdp_enabled: ', self.is_fsdp_enabled)
         return model
+
+
+    def torch_jit_model_eval(self, *args, **kwargs):
+        print('model input to torch_jit_model_eval func: ', args[0], type(args[0]))
+        return super().torch_jit_model_eval(*args, **kwargs)
