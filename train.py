@@ -24,7 +24,7 @@ def main(
         pre_init = pre_init,
         model_key = model_key, 
         data_version = "2_0",
-        ratio = None,
+        ratio = 0.01,
         distribution_type = distribution_type,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         num_train_epochs = 3,

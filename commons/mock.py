@@ -22,4 +22,7 @@ class MockSFTTrainer(SFTTrainer):
         
         result = super()._wrap_model(*args, **kwargs)
         print('result: ', result)
+
+        use_accelerator_prepare = True if model is self.model else False
+        print('check use_accelerator_prepare: ', use_accelerator_prepare)
         return result
