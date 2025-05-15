@@ -11,7 +11,7 @@ from trl import SFTTrainer
 class MockSFTTrainer(SFTTrainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print('in mock check accelerate config: ', self.args.accelerator_config)
+        print('in mock check accelerate config: ', self.accelerator.state.is_fsdp2)
     
     def _wrap_model(self, *args, **kwargs):
         print('self.is_fsdp_xla_v2_enabled: ', self.is_fsdp_xla_v2_enabled)
