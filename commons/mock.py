@@ -59,9 +59,10 @@ class MockSFTTrainer(SFTTrainer):
                 dataset_name = _arg
         
         if dataset_name == 'val':
+            print(f'skip packing for {dataset_name} dataset')
             return dataset
         else:
-            print('running packing for train dataset')
+            print(f'running packing for {dataset_name} dataset')
             print('check output dataset col names: ',dataset.column_names)
             dataset = dataset.select_columns(self._COLUMN_NAMES)
 
