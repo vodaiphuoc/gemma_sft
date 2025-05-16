@@ -3,6 +3,7 @@ from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .mock import MockSFTTrainer
+from .constants import COLLATOR_INST_TEMPLATE, COLLATOR_RESP_TEMPLATE
 
 def training_process(
         pre_init: tuple,
@@ -22,7 +23,7 @@ def training_process(
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig, SFTTrainer
+    from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -74,6 +75,11 @@ def training_process(
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
+        data_collator = DataCollatorForCompletionOnlyLM(
+            response_template = COLLATOR_RESP_TEMPLATE,
+            instruction_template = COLLATOR_INST_TEMPLATE,
+            tokenizer = tokenizer
+        ),
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
         args = SFTConfig(
             do_train = True,
