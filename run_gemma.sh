@@ -40,8 +40,8 @@ case "$1" in
                 train.py \
                 --distribution_type cuda \
                 --model_key gemma \
-                --train_batch_size 4 \
-                --eval_batch_size 4
+                --train_batch_size 2 \
+                --eval_batch_size 2
         
         else
             echo unknow value of tpu option: "${run_with_tpu}"
