@@ -45,7 +45,8 @@ def training_process(
         # In case the model returns more than the prediction logits
         if isinstance(preds, tuple):
             preds = preds[0]
-    
+
+        print('check raw label: ', labels)
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
@@ -78,7 +79,7 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
-            jit_mode_eval = True,
+            jit_mode_eval = False,
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
