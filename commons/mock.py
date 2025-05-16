@@ -18,7 +18,7 @@ class MockSFTTrainer(SFTTrainer):
         for _arg in args:
             if isinstance(_arg, SFTConfig):
                 config = _arg
-        for _, _kwarg_value in kwargs.item():
+        for _, _kwarg_value in kwargs.items():
             if isinstance(_kwarg_value, SFTConfig):
                 config = _kwarg_value
         
