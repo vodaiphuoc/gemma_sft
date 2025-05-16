@@ -51,6 +51,8 @@ def training_process(
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+
+        print('check decoded labels: ',tokenizer.batch_decode(labels, skip_special_tokens=False))
         
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
@@ -65,7 +67,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = MockSFTTrainer(
+    trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -91,8 +93,8 @@ def training_process(
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 128,
-            packing = False,   # packing is False to get completion_mask for `DataCollatorForLanguageModeling`
+            max_length = 1024,
+            packing = True,   # packing is False to get completion_mask for `DataCollatorForLanguageModeling`
             max_seq_length = 128,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
