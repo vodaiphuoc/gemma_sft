@@ -7,7 +7,7 @@ fsdp_config:
   fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP
   fsdp_transformer_layer_cls_to_wrap: Gemma3DecoderLayer
   fsdp_backward_prefetch: BACKWARD_PRE
-  fsdp_cpu_ram_efficient_loading: true
+  fsdp_cpu_ram_efficient_loading: false
   fsdp_forward_prefetch: true
   fsdp_offload_params: false
   fsdp_sharding_strategy: FULL_SHARD
