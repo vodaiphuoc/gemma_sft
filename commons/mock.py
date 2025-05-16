@@ -49,7 +49,7 @@ class MockSFTTrainer(SFTTrainer):
         for _arg in args:
             if isinstance(_arg, SFTConfig):
                 config = _arg
-            elif isinstance(_arg,str) and _arg in ['train','val']:
+            elif isinstance(_arg,str) and _arg in ['train','eval']:
                 dataset_name = _arg
             else:
                 continue
@@ -57,12 +57,12 @@ class MockSFTTrainer(SFTTrainer):
         for _, _kwarg_value in kwargs.items():
             if isinstance(_kwarg_value, SFTConfig):
                 config = _kwarg_value
-            elif isinstance(_arg,str) and _arg in ['train','val']:
+            elif isinstance(_arg,str) and _arg in ['train','eval']:
                 dataset_name = _kwarg_value
             else:
                 continue
 
-        if dataset_name == 'val':
+        if dataset_name == 'eval':
             print(f'skip packing for {dataset_name} dataset')
             return dataset
         else:
