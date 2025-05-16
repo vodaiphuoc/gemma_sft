@@ -77,6 +77,7 @@ def training_process(
             do_train = True,
             do_eval = True,
             eval_strategy = 'epoch',
+            save_strategy = 'epoch',
             torch_compile = True,
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
