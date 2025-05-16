@@ -5,8 +5,8 @@ enable_cpu_affinity: false
 
 # for testing torch compile
 dynamo_config:
-  dynamo_backend: "inductor"
-  dynamo_mode: true
+  dynamo_backend: inductor
+  dynamo_mode: default
   dynamo_use_regional_compilation: true
 
 # for FSDP
