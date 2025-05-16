@@ -59,7 +59,7 @@ class MockSFTTrainer(SFTTrainer):
             dataset = dataset, 
             max_length = config.max_length
         )
-        
+        print('get number of chunk:', len(chunk_ids))
         def _dataset_gen(chunk_ids: List[List[int]]):
             for chunk in chunk_ids:
                 chunk_dataset = dataset.select(chunk)
@@ -72,4 +72,5 @@ class MockSFTTrainer(SFTTrainer):
             _dataset_gen, 
             gen_kwargs = {"chunk_ids": chunk_ids}
         )
+        print('lenght packed dataset: ', packed_dataset)
         return packed_dataset.select_columns(self._COLUMN_NAMES)
