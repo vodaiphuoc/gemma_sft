@@ -23,7 +23,7 @@ def training_process(
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig, SFTTrainer, DataCollatorForCompletionOnlyLM
+    from trl import SFTConfig, SFTTrainer
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -69,17 +69,12 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
-        data_collator = DataCollatorForCompletionOnlyLM(
-            response_template = COLLATOR_RESP_TEMPLATE,
-            instruction_template = COLLATOR_INST_TEMPLATE,
-            tokenizer = tokenizer
-        ),
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
         args = SFTConfig(
             do_train = True,
@@ -101,8 +96,8 @@ def training_process(
             bf16=True,
             bf16_full_eval = True,
             max_length = 1024,
-            packing = True,   # packing is False to get completion_mask for `DataCollatorForLanguageModeling`
-            max_seq_length = 128,
+            packing = False,   # packing is False to get completion_mask for `sft.DataCollatorForLanguageModeling`
+            max_seq_length = None,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'epoch',

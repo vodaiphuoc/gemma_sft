@@ -5,35 +5,20 @@ import warnings
 import numpy as np
 import torch
 
-from trl import SFTTrainer
-
+from trl import SFTTrainer, pack_dataset
 
 class MockSFTTrainer(SFTTrainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print('in mock check accelerate config: ', self.accelerator.state.is_fsdp2)
     
-    def _wrap_model(self, *args, **kwargs):
-        print('self.is_fsdp_xla_v2_enabled: ', self.is_fsdp_xla_v2_enabled)
-        if len(args) > 0:
-            for _arg in args:
-                print('arg type: ', type(_arg))
-        if len(kwargs) > 0:
-            for _k, _v in kwargs.items():
-                if "training" == _k:
-                    print(_k,_v)
-                else:
-                    print('kwarg type: ', type(_k), type(_v))
+    def _prepare_dataset(self, *args, **kwargs):
+        dataset = super()._prepare_dataset(*args, **kwargs)
         
-        model = super()._wrap_model(*args, **kwargs)
-        print('result model type: ', type(model))
+        example = dataset[0]
+        assert len(example['input_ids']) == len(example['completion_mask'])
 
-        use_accelerator_prepare = True if model is self.model else False
-        print('check use_accelerator_prepare: ', use_accelerator_prepare)
-        print('self.is_fsdp_enabled: ', self.is_fsdp_enabled)
-        return model
-
-
-    def torch_jit_model_eval(self, *args, **kwargs):
-        print('model input to torch_jit_model_eval func type: ', type(args[0]))
-        return super().torch_jit_model_eval(*args, **kwargs)
+        map_kwargs = {
+            "desc": f"Custom packing dataset in `MockSFTTrainer`"
+        }
+        packed_dataset = pack_dataset(dataset, self.args.max_length, map_kwargs)
+        return packed_dataset
