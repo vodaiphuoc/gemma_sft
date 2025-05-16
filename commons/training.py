@@ -3,7 +3,6 @@ from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .mock import MockSFTTrainer
-from .constants import COLLATOR_INST_TEMPLATE, COLLATOR_RESP_TEMPLATE
 
 def training_process(
         pre_init: tuple,
