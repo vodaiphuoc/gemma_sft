@@ -4,9 +4,10 @@ distributed_type: FSDP
 enable_cpu_affinity: false
 
 # for testing torch compile
-dynamo_backend: "inductor"
-dynamo_mode: true
-dynamo_use_regional_compilation: true
+dynamo_config:
+  dynamo_backend: "inductor"
+  dynamo_mode: true
+  dynamo_use_regional_compilation: true
 
 # for FSDP
 fsdp_config:
