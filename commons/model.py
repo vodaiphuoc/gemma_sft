@@ -6,8 +6,7 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedTokenizer,
-    PreTrainedModel,
-    BitsAndBytesConfig
+    PreTrainedModel
 )
 import torch
 from typing import Tuple, Union
@@ -24,23 +23,23 @@ def _get_pretrained_model(
         - in distribution on GPUs, map device with `PartialState`
     """
     if distribution_type == "cuda":
-        from accelerate import PartialState
-        device_map={'':PartialState().process_index}
-    elif distribution_type == "tpu":
-        device_map=None
-    else:
-        device_map=None
-        
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        attn_implementation='eager',
-        torch_dtype=torch.bfloat16,
+        from transformers import BitsAndBytesConfig
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_storage=torch.bfloat16
         )
+    elif distribution_type == "tpu":
+        quantization_config=None
+    else:
+        quantization_config=None
+        
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        attn_implementation='eager',
+        torch_dtype=torch.bfloat16,
+        quantization_config = quantization_config
     )
     return model
 
