@@ -2,3 +2,4 @@ trl
 peft
 transformers
 torchmetrics
+bitsandbytes
