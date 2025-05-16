@@ -15,6 +15,8 @@ fsdp_config:
   fsdp_sync_module_states: true
   fsdp_use_orig_params: false
   fsdp_version: 2
+  xla: True
+  xla_fsdp_v2: True
 machine_rank: 0
 main_training_function: main
 mixed_precision: 'no'
