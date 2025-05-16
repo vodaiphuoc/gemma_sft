@@ -23,7 +23,7 @@ def training_process(
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig, SFTTrainer
+    from trl import SFTConfig
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -47,14 +47,11 @@ def training_process(
         if isinstance(preds, tuple):
             preds = preds[0]
 
-        print('check raw label: ', labels)
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-
-        print('check decoded labels: ',tokenizer.batch_decode(labels, skip_special_tokens=False))
         
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
@@ -113,6 +110,6 @@ def training_process(
     trainer.train()
     print('run evaluate')
     output_metrics = trainer.evaluate()
-    # print('output metrics: ', output_metrics)
+    print('output metrics: ', output_metrics)
     # print('done training, saving model')
     # trainer.save_model(checkpoint_save_dir)

@@ -87,5 +87,5 @@ class MockSFTTrainer(SFTTrainer):
                 _dataset_gen, 
                 gen_kwargs = {"chunk_ids": chunk_ids}
             )
-            print('lenght packed dataset: ', packed_dataset)
+            print('length dataset after packing: ', len(packed_dataset))
             return packed_dataset.select_columns(self._COLUMN_NAMES)
