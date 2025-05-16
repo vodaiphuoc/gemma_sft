@@ -62,7 +62,6 @@ if __name__ == '__main__':
             num_processes = 8
         )
     else:
-        os.environ['PJRT_DEVICE'] = 'CUDA'
         main(
             distribution_type = args.distribution_type,
             model_key= args.model_key,

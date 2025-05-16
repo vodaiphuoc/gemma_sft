@@ -1,6 +1,6 @@
 compute_environment: LOCAL_MACHINE
 debug: false
-distributed_type: XLA
+distributed_type: FSDP
 downcast_bf16: 'no'
 enable_cpu_affinity: false
 fsdp_config:
@@ -9,14 +9,12 @@ fsdp_config:
   fsdp_backward_prefetch: BACKWARD_PRE
   fsdp_cpu_ram_efficient_loading: false
   fsdp_forward_prefetch: true
-  fsdp_offload_params: false
+  fsdp_offload_params: true
   fsdp_sharding_strategy: FULL_SHARD
   fsdp_state_dict_type: SHARDED_STATE_DICT
   fsdp_sync_module_states: true
   fsdp_use_orig_params: false
   fsdp_version: 2
-  xla: True
-  xla_fsdp_v2: True
 machine_rank: 0
 main_training_function: main
 mixed_precision: bf16
