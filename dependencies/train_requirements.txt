@@ -3,6 +3,7 @@ peft
 transformers
 accelerate==1.6.0
 torch
+torch_xla
 torchvision 
 torchaudio
 torchmetrics
