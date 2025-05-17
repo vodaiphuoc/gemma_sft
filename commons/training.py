@@ -119,7 +119,7 @@ def training_process(
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            packing = True,
+            packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
             max_seq_length = None,
