@@ -1,13 +1,15 @@
 #!/bin/bash
 
-OPTS=$(getopt -o "" --long tpu:: -- "$@")
+OPTS=$(getopt -o "" --long tpu:,type: -- "$@")
 eval set -- "$OPTS"
 
 run_with_tpu=""
+dist_type=""
+
 case "$1" in
     --tpu)
-        shift 2
         run_with_tpu="$2"
+        dist_type="$4"
 
         if [ "${run_with_tpu}" == "true" ]; then
             echo currently not support run bert with tpu
@@ -15,23 +17,40 @@ case "$1" in
 
         elif [ "${run_with_tpu}" == "false" ]; then
             # with GPUs, use accelerate lunch with 1.6.0
-            echo run with gpu
-
-            echo setup sub dependencies in requirement
+            echo setup sub dependencies in requirement for gpu
             pip install -q -U -r dependencies/train_requirements.txt
             
-            echo check version after install
-            pip list
+            # echo check version after install
+            # pip list
 
-            echo run train.py
-            accelerate launch \
-                --config_file config/bert.yaml \
-                train.py \
-                --distribution_type cuda \
-                --model_key bert \
-                --train_batch_size 64 \
-                --eval_batch_size 64
-        
+            
+            if [ "${dist_type}" == "fsdp" ]; then
+                echo run train.py with fsdp
+                accelerate launch \
+                    --config_file config/gemma_fsdp.yaml \
+                    train.py \
+                    --distribution_device cuda \
+                    --distribution_type fsdp \
+                    --model_key bert \
+                    --train_batch_size 16 \
+                    --eval_batch_size 16
+
+            elif [ "${dist_type}" == "ddp" ]; then
+                echo run train.py with ddp
+                accelerate launch \
+                    --config_file config/gemma_gpus.yaml \
+                    train.py \
+                    --distribution_device cuda \
+                    --distribution_type ddp \
+                    --model_key bert \
+                    --train_batch_size 16 \
+                    --eval_batch_size 16
+                
+            else
+                echo only support distribution type "fsdp" or "ddp"
+                exit 1
+            fi
+
         else
             echo unknow value of tpu option: "${run_with_tpu}"
             exit 1
