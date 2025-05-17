@@ -94,7 +94,7 @@ def training_process(
             learning_rate=learning_rate,
             # fp16=True,
             # fp16_full_eval = True,
-            max_length = 1024,
+            max_length = 512,
             packing = True,
             max_seq_length = None,
             optim = 'adamw_torch_fused',
