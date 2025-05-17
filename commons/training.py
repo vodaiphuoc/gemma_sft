@@ -5,6 +5,7 @@ from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
 )
+from .mock import MockSFTTrainer
 
 def training_process(
         pre_init: tuple,
@@ -91,7 +92,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
