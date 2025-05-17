@@ -78,10 +78,18 @@ def training_process(
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
         
+
         print(f"""
 metric debugging
 debug preds: {tokenizer.batch_decode(preds[0:3], skip_special_tokens=False)}
 debug labels: {tokenizer.batch_decode(labels[0:3], skip_special_tokens=False)}
+--------------------------------------------------------------
+""")
+
+        print(f"""
+metric debugging (text only)
+debug preds: {tokenizer.batch_decode(preds[0:3], skip_special_tokens=True)}
+debug labels: {tokenizer.batch_decode(labels[0:3], skip_special_tokens=True)}
 --------------------------------------------------------------
 """)
 
