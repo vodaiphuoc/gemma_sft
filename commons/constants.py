@@ -6,7 +6,7 @@ MODEL_KEY2IDS = {
 }
 
 LORA_PARAMS = {
-    "r":16,
+    "r":8,
     "lora_alpha": 32,
     "lora_dropout": 0.05,
     "bias":"none",

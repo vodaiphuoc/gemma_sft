@@ -120,6 +120,7 @@ def training_process(
             max_length = max_length,
             packing = True,
             eval_packing = False,
+            jit_mode_eval = True,
             max_seq_length = None,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
