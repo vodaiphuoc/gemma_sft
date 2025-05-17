@@ -39,7 +39,8 @@ def _get_pretrained_model(
         model_id,
         attn_implementation='eager',
         torch_dtype=torch.float32,
-        # quantization_config = quantization_config
+        quantization_config = quantization_config,
+        device_map={'':torch.cuda.current_device()}
     )
     return model
 
