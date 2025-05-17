@@ -54,7 +54,7 @@ case "$1" in
                     --distribution_device cuda \
                     --distribution_type ddp \
                     --model_key gemma \
-                    --train_batch_size 4 \
+                    --train_batch_size 2 \
                     --eval_batch_size 2
                 
             else
