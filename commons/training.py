@@ -75,13 +75,13 @@ def training_process(
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
-        decoded_preds = tokenizer.batch_decode(preds[0], skip_special_tokens=True)
-        decoded_labels = tokenizer.batch_decode(labels[0], skip_special_tokens=True)
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
         
         print(f"""
 metric debugging
-debug preds: {tokenizer.batch_decode(preds, skip_special_tokens=False)}
-debug labels: {tokenizer.batch_decode(labels, skip_special_tokens=False)}
+debug preds: {tokenizer.batch_decode(preds[0], skip_special_tokens=False)}
+debug labels: {tokenizer.batch_decode(labels[0], skip_special_tokens=False)}
 --------------------------------------------------------------
 """)
 
