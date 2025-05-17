@@ -31,8 +31,8 @@ def training_process(
             "ddp_find_unused_parameters": False,
         }
         max_length = 1024
-        dataloader_prefetch_factor = 3,
-        gradient_accumulation_steps = 6,
+        dataloader_prefetch_factor = 3
+        gradient_accumulation_steps = 6
     else:
         torch_compile_config = {
             "torch_compile": True,
@@ -41,8 +41,8 @@ def training_process(
             "ddp_find_unused_parameters": True,
         }
         max_length = 512
-        dataloader_prefetch_factor = 2,
-        gradient_accumulation_steps = 3,
+        dataloader_prefetch_factor = 2
+        gradient_accumulation_steps = 3
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -137,5 +137,5 @@ def training_process(
     print('run evaluate')
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
-    # print('done training, saving model')
-    # trainer.save_model(checkpoint_save_dir)
+    print('done training, saving model')
+    trainer.save_model(checkpoint_save_dir)
