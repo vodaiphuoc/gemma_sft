@@ -3,12 +3,6 @@ debug: false
 distributed_type: FSDP
 enable_cpu_affinity: false
 
-# for testing torch compile
-dynamo_config:
-  dynamo_backend: inductor
-  dynamo_mode: default
-  dynamo_use_regional_compilation: true
-
 # for FSDP
 fsdp_config:
   fsdp_auto_wrap_policy: TRANSFORMER_BASED_WRAP

@@ -2,7 +2,7 @@ import os
 from typing import List
 from .model import get_model_tokenizer
 from .dataset import get_datasets
-from .mock import MockSFTTrainer
+# from .mock import MockSFTTrainer
 
 def training_process(
         pre_init: tuple,
@@ -17,12 +17,12 @@ def training_process(
         learning_rate: float = 2e-4,
         fsdp_config = None,
     ):
-    os.environ["ACCELERATE_USE_FSDP"]= "true"
+    # os.environ["ACCELERATE_USE_FSDP"]= "true"
     
     import numpy as np
     from torchmetrics.functional.text import bleu_score
     from torchmetrics.functional.text.rouge import rouge_score
-    from trl import SFTConfig
+    from trl import SFTConfig, SFTTrainer
 
     if pre_init is None:
         model, tokenizer, lora_config = get_model_tokenizer(
@@ -65,8 +65,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    print('fsdp_config: ',fsdp_config)
-    trainer = MockSFTTrainer(
+    trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -78,9 +77,9 @@ def training_process(
             do_eval = True,
             eval_strategy = 'epoch',
             save_strategy = 'epoch',
-            torch_compile = True,
-            torch_compile_backend = "inductor",
-            torch_compile_mode = "default",
+            # torch_compile = True,
+            # torch_compile_backend = "inductor",
+            # torch_compile_mode = "default",
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
@@ -95,8 +94,8 @@ def training_process(
             learning_rate=learning_rate,
             bf16=True,
             bf16_full_eval = True,
-            max_length = 768,
-            packing = False,   # packing is False to get completion_mask for `sft.DataCollatorForLanguageModeling`
+            max_length = 1024,
+            packing = True,
             max_seq_length = None,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
