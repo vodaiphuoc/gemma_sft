@@ -65,6 +65,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
+    print('fsdp_config: ',fsdp_config)
     trainer = MockSFTTrainer(
         model = model,
         processing_class = tokenizer,
@@ -78,6 +79,8 @@ def training_process(
             eval_strategy = 'epoch',
             save_strategy = 'epoch',
             torch_compile = True,
+            torch_compile_backend = "inductor",
+            torch_compile_mode = "default",
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
