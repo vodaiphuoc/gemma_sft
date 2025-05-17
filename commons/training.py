@@ -77,21 +77,6 @@ def training_process(
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-        
-
-        print(f"""
-metric debugging
-debug preds: {tokenizer.batch_decode(preds[0:3], skip_special_tokens=False)}
-debug labels: {tokenizer.batch_decode(labels[0:3], skip_special_tokens=False)}
---------------------------------------------------------------
-""")
-
-        print(f"""
-metric debugging (text only)
-debug preds: {tokenizer.batch_decode(preds[0:3], skip_special_tokens=True)}
-debug labels: {tokenizer.batch_decode(labels[0:3], skip_special_tokens=True)}
---------------------------------------------------------------
-""")
 
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
@@ -137,6 +122,8 @@ debug labels: {tokenizer.batch_decode(labels[0:3], skip_special_tokens=True)}
             eval_packing = False,
             jit_mode_eval = False,
             max_seq_length = None,
+            lr_scheduler_type = 'cosine_with_restarts',
+            lr_scheduler_kwargs = {"num_cycles": 10},
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'epoch',
