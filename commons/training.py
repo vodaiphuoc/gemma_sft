@@ -40,7 +40,7 @@ def training_process(
             "torch_compile_mode": "default",
             "ddp_find_unused_parameters": True,
         }
-        max_length = 640
+        max_length = 640 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
         gradient_accumulation_steps = 3
 

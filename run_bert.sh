@@ -38,7 +38,7 @@ case "$1" in
             elif [ "${dist_type}" == "ddp" ]; then
                 echo run train.py with ddp
                 accelerate launch \
-                    --config_file config/gemma_gpus.yaml \
+                    --config_file config/bert_gpus.yaml \
                     train.py \
                     --distribution_device cuda \
                     --distribution_type ddp \
