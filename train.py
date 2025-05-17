@@ -24,7 +24,7 @@ def main(
     training_process(
         pre_init = pre_init,
         model_key = model_key,
-        data_version = "2_0",
+        data_version = "2_1",
         ratio = 0.1,
         distribution_device = distribution_device,
         distribution_type = distribution_type,
