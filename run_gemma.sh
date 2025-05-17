@@ -60,6 +60,7 @@ case "$1" in
             else
                 echo only support distribution type "fsdp" or "ddp"
                 exit 1
+            fi
 
         else
             echo unknow value of tpu option: "${run_with_tpu}"
