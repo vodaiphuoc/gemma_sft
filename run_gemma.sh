@@ -36,7 +36,7 @@ case "$1" in
 
             echo run train.py
             accelerate launch \
-                --config_file config/gemma.yaml \
+                --config_file config/gemma_gpus.yaml \
                 train.py \
                 --distribution_type cuda \
                 --model_key gemma \
