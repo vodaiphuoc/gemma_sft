@@ -119,6 +119,7 @@ def training_process(
             fp16_full_eval = True,
             max_length = max_length,
             packing = True,
+            eval_packing = False,
             max_seq_length = None,
             optim = 'adamw_torch_fused',
             label_names=["labels"],
