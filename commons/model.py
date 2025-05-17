@@ -38,7 +38,7 @@ def _get_pretrained_model(
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         attn_implementation='eager',
-        torch_dtype=torch.bfloat16,
+        torch_dtype=torch.float32,
         # quantization_config = quantization_config
     )
     return model
