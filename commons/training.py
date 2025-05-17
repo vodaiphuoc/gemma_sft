@@ -88,7 +88,7 @@ def training_process(
             dataloader_drop_last=True,
             dataloader_num_workers = 2,
             dataloader_prefetch_factor = 2,
-            gradient_accumulation_steps = 2,
+            gradient_accumulation_steps = 3,
             warmup_steps=2,
             completion_only_loss = True,
             learning_rate=learning_rate,
