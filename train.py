@@ -1,10 +1,11 @@
 import os
 import argparse
-from commons.constants import DISTRIBUTION_TYPES, MODEL_KEY2IDS
+from commons.constants import DISTRIBUTION_TYPE, DISTRIBUTION_DEVICE, MODEL_KEY2IDS
 from commons.model import get_model_tokenizer
 
 def main(
-        distribution_type: DISTRIBUTION_TYPES, 
+        distribution_device: DISTRIBUTION_DEVICE, 
+        distribution_type: DISTRIBUTION_TYPE, 
         model_key:str, 
         fsdp_config_path:str,
         train_batch_size: int, 
@@ -22,9 +23,10 @@ def main(
     
     training_process(
         pre_init = pre_init,
-        model_key = model_key, 
+        model_key = model_key,
         data_version = "2_0",
         ratio = 0.3,
+        distribution_device = distribution_device,
         distribution_type = distribution_type,
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         num_train_epochs = 2,
@@ -36,6 +38,7 @@ def main(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--distribution_device', type=str)
     parser.add_argument('--distribution_type', type=str)
     parser.add_argument('--model_key', type=str)
     parser.add_argument('--train_batch_size', type=int, default= 12)
@@ -63,6 +66,7 @@ if __name__ == '__main__':
         )
     else:
         main(
+            distribution_device = args.distribution_device,
             distribution_type = args.distribution_type,
             model_key= args.model_key,
             fsdp_config_path = args.fsdp_config_path,

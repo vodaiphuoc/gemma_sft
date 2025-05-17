@@ -14,7 +14,8 @@ LORA_PARAMS = {
     "task_type": "CAUSAL_LM"
 }
 
-DISTRIBUTION_TYPES = Literal["No","cuda","tpu"]
+DISTRIBUTION_DEVICE = Literal["No","cuda","tpu"]
+DISTRIBUTION_TYPE = Literal["fsdp","ddp"]
 
 COLLATOR_INST_TEMPLATE = "<start_of_turn>user"
 COLLATOR_RESP_TEMPLATE = "<start_of_turn>model"
