@@ -78,6 +78,13 @@ def training_process(
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
         
+        print(f"""
+metric debugging
+debug preds: {tokenizer.batch_decode(preds, skip_special_tokens=False)}
+debug labels: {tokenizer.batch_decode(labels, skip_special_tokens=False)}
+--------------------------------------------------------------
+""")
+
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
