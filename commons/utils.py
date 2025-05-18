@@ -44,7 +44,7 @@ class LearningRateLogger(TrainerCallback):
     def on_train_end(self, args, state, control, **kwargs):
         try:
             logging_file_path = os.path.join(args.logging_dir, "learning_rate.json")
-            with open(logging_file_path) as fp:
+            with open(logging_file_path,'w') as fp:
                 json.dump(self._lr_per_step, fp)
         except Exception as e:
             print(f"error in on_train_end callback: {e}")

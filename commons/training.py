@@ -127,7 +127,7 @@ def training_process(
             max_seq_length = None,
             lr_scheduler_type = 'cosine_with_min_lr',
             warmup_steps= 3,
-            lr_scheduler_kwargs = {"min_lr": 1e-7},
+            lr_scheduler_kwargs = {"min_lr": 1e-6, "num_cycles": 1.5},
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'steps',
