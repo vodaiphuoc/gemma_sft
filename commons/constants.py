@@ -30,7 +30,7 @@ BERT_LORA_PARAMS = {
     "lora_alpha": 32,
     "lora_dropout": 0.05,
     "bias":"none",
-    "target_modules": ["q_proj", "k_proj", "v_proj"],
+    "target_modules": ["query", "key", "value"],
     "task_type": "CAUSAL_LM"
 }
 
