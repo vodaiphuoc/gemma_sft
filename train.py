@@ -30,7 +30,7 @@ def main(
         distribution_type = distribution_type,
         logging_dir = os.path.join(os.path.dirname(__file__),"logs"),
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
-        num_train_epochs = 1,
+        num_train_epochs = 4,
         train_batch_size = train_batch_size,
         eval_batch_size = eval_batch_size,
         learning_rate = 1e-4,
