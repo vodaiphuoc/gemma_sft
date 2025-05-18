@@ -25,6 +25,15 @@ LORA_PARAMS2 = {
 }
 
 
+BERT_LORA_PARAMS = {
+    "r":8,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "bias":"none",
+    "target_modules": ["q_proj", "k_proj", "v_proj"],
+    "task_type": "CAUSAL_LM"
+}
+
 DISTRIBUTION_DEVICE = Literal["No","cuda","tpu"]
 DISTRIBUTION_TYPE = Literal["fsdp","ddp"]
 

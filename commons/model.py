@@ -4,7 +4,8 @@ from .constants import (
     DISTRIBUTION_DEVICE,
     MODEL_KEY2IDS, 
     LORA_PARAMS1,
-    LORA_PARAMS2
+    LORA_PARAMS2,
+    BERT_LORA_PARAMS
 )
 
 from peft import LoraConfig
@@ -86,7 +87,10 @@ def get_model_tokenizer(
             torch_dtype=torch.float32
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
-        return model, tokenizer, None
+        lora_config = LoraConfig(
+            **BERT_LORA_PARAMS
+        )
+        return model, tokenizer, lora_config
         
     else:
         raise NotImplemented(f"Only support key in: {list(MODEL_KEY2IDS.keys())}")
