@@ -5,6 +5,7 @@ from typing import Dict, Union
 from types import NoneType
 from transformers import TrainerCallback
 import matplotlib.pyplot as plt
+import torch.optim.Optimizer as Opt
 
 def get_fsdp_config_from_yaml(yaml_path: str)->Union[Dict[str,str], NoneType]:
     if yaml_path != "":
@@ -28,8 +29,13 @@ class LearningRateLogger(TrainerCallback):
         self._lr_per_step = []
 
     def on_step_end(self, args, state, control, **kwargs):
-        if state.optimizer is not None:
-            current_lr = state.optimizer.param_groups[0]['lr']
+        current_lr = None
+        for _kw, _kw_value in kwargs.items():
+            if _kw == "optimizer" and isinstance(_kw_value, Opt):
+                current_lr = _kw_value.param_groups[0]['lr']
+                break
+        
+        if current_lr is not None:
             self._lr_per_step.append({
                 "step": state.global_step,
                 "lr": current_lr
