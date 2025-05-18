@@ -20,7 +20,7 @@ LORA_PARAMS2 = {
     "lora_alpha": 32,
     "lora_dropout": 0.05,
     "bias":"none",
-    "target_modules": ["all-linear"],
+    "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj"],
     "task_type": "CAUSAL_LM"
 }
 
