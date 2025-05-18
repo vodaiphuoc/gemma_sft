@@ -14,6 +14,8 @@ class MockSFTTrainer(SFTTrainer):
         super().__init__(*args, **kwargs)
 
         print('check mix precision of accelerator: ',self.accelerator.mixed_precision)
+        print('self.model type: ', type(self.model))
+        print('num trainable params: ',self.model.print_trainable_parameters())
 
     def _find_chunk_ids(
             self, 
