@@ -78,8 +78,23 @@ def training_process(
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
+        print(f"""
+DEBUG:
+raw label: {labels[0]}
+-------------------------------------
+""")
+        
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+
+
+        print(f"""
+DEBUG:
+decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False)}       
+decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
+-------------------------------------
+""")
+
 
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
