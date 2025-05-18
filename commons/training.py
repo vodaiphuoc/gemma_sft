@@ -6,6 +6,7 @@ from .constants import (
     DISTRIBUTION_DEVICE,
 )
 from .mock import MockSFTTrainer
+from .utils import LearningRateLogger
 
 def training_process(
         pre_init: tuple,
@@ -14,6 +15,7 @@ def training_process(
         ratio: float,
         distribution_device: DISTRIBUTION_DEVICE,
         distribution_type: DISTRIBUTION_TYPE,
+        logging_dir:str,
         checkpoint_save_dir:str,
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
@@ -99,6 +101,7 @@ def training_process(
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
+        callbacks = [LearningRateLogger()],
         args = SFTConfig(
             do_train = True,
             do_eval = True,
@@ -113,7 +116,6 @@ def training_process(
             dataloader_num_workers = 2,
             dataloader_prefetch_factor = dataloader_prefetch_factor,
             gradient_accumulation_steps = gradient_accumulation_steps,
-            warmup_steps=2,
             completion_only_loss = True,
             learning_rate=learning_rate,
             fp16=True,
@@ -123,11 +125,12 @@ def training_process(
             eval_packing = False,
             jit_mode_eval = False,
             max_seq_length = None,
-            lr_scheduler_type = 'cosine_with_restarts',
-            lr_scheduler_kwargs = {"num_cycles": 10},
+            lr_scheduler_type = 'get_cosine_schedule_with_warmup',
+            lr_scheduler_kwargs = {"num_warmup_steps": 3},
             optim = 'adamw_torch_fused',
             label_names=["labels"],
-            logging_strategy = 'epoch',
+            logging_strategy = 'steps',
+            logging_dir = logging_dir,
             report_to = "none",
             output_dir = checkpoint_save_dir,
             fsdp = fsdp_config['fsdp_sharding_strategy'].lower() if fsdp_config is not None else '',

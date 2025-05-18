@@ -25,14 +25,15 @@ def main(
         pre_init = pre_init,
         model_key = model_key,
         data_version = "2_1",
-        ratio = None,
+        ratio = 0.01,
         distribution_device = distribution_device,
         distribution_type = distribution_type,
+        logging_dir = os.path.join(os.path.dirname(__file__),"logs"),
         checkpoint_save_dir = os.path.join(os.path.dirname(__file__),"checkpoints"),
         num_train_epochs = 2,
         train_batch_size = train_batch_size,
         eval_batch_size = eval_batch_size,
-        learning_rate = 1e-5,
+        learning_rate = 1e-4,
         fsdp_config = fsdp_config
     )
 
