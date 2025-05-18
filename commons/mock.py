@@ -69,6 +69,7 @@ class MockSFTTrainer(SFTTrainer):
             print(f'skip packing for {dataset_name} dataset')
             return dataset
         else:
+            assert dataset_name == "train"
             print(f'running packing for {dataset_name} dataset')
             print('check output dataset col names: ',dataset.column_names)
             dataset = dataset.select_columns(self._COLUMN_NAMES)
@@ -82,7 +83,9 @@ class MockSFTTrainer(SFTTrainer):
                 for chunk in chunk_ids:
                     chunk_dataset = dataset.select(chunk)
                     yield {
-                        col: [ele for each_ids in chunk_dataset[col] for ele in each_ids]
+                        col: [ele for each_ids in chunk_dataset[col] for ele in each_ids] \
+                        if col != "completion_mask" else \
+                        [1 for each_ids in chunk_dataset[col] for ele in each_ids]
                         for col in self._COLUMN_NAMES
                     }
 
