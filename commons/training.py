@@ -116,11 +116,11 @@ def training_process(
             dataloader_num_workers = 2,
             dataloader_prefetch_factor = dataloader_prefetch_factor,
             gradient_accumulation_steps = gradient_accumulation_steps,
-            completion_only_loss = True,
             learning_rate=learning_rate,
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
+            completion_only_loss = False,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
