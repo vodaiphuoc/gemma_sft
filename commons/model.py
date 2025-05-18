@@ -3,7 +3,8 @@ from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
     MODEL_KEY2IDS, 
-    LORA_PARAMS
+    LORA_PARAMS1,
+    LORA_PARAMS2
 )
 
 from peft import LoraConfig
@@ -73,7 +74,7 @@ def get_model_tokenizer(
             distribution_type = distribution_type
         )
         lora_config = LoraConfig(
-            **LORA_PARAMS
+            **LORA_PARAMS2
         )
         return model, tokenizer, lora_config
 
