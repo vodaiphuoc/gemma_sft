@@ -4,3 +4,4 @@ myenv/
 *test*.sh
 .temp*/
 *.pyc
+data/1_0/
