@@ -7,6 +7,7 @@ from types import NoneType
 from transformers import TrainerCallback
 import matplotlib.pyplot as plt
 from torch.optim import Optimizer
+import numpy as np
 
 def get_fsdp_config_from_yaml(yaml_path: str)->Union[Dict[str,str], NoneType]:
     if yaml_path != "":
