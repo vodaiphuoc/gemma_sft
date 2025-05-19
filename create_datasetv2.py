@@ -6,8 +6,20 @@ from tqdm import tqdm
 import json
 
 datasets.disable_progress_bars()
-SYSTEM_PROMPT:str = "You are a helpfull assistant always give emotional reponse in conservation"
-
+SYSTEM_PROMPT:str = """You are a helpfull assistant always give emotional reponse in conservation.
+Your reponse must follow the JSON format:
+{
+    "predict_emotion": str
+    "response": str
+}
+where "predict_emotion" can be one of following labels:
+    'sentimental', 'impressed', 'proud', 'devastated', 'content', 'afraid', 'surprised', 
+    'hopeful', 'prepared', 'furious', 'faithful', 'angry', 'annoyed', 'sad', 'embarrassed', 
+    'confident', 'ashamed', 'apprehensive', 'terrified', 'disappointed', 'lonely', 'jealous', 
+    'anxious', 'grateful', 'caring', 'guilty', 'disgusted', 'excited', 'nostalgic', 'joyful', 
+    'anticipating', 'trusting'.
+and "response" is your main emotional response.
+"""
 
 def _get_unique_id(data: Dataset)->List[int]:
     unique_id = {}
@@ -34,8 +46,7 @@ def _process_history(conv_data: List[Dict[str, Any]])->Dict[str, List[Dict[str,s
         {
             "role": "user",
             "content": f"""
-Conversation emotion: {conv_data[-1]['context']}
-Situation: {conv_data[-1]['prompt'].replace('_comma_',',')}
+Context: {conv_data[-1]['prompt'].replace('_comma_',',')}.
 {x['utterance'].replace('_comma_',',')}
 """ 
         } if _ith%2 == 0 else \
@@ -55,11 +66,17 @@ Situation: {conv_data[-1]['prompt'].replace('_comma_',',')}
 
     prompts.extend(_history)
 
+    # prepare completion
+    desired_completion = {
+        "predict_emotion": conv_data[-1]['context'],
+        "response": conv_data[-1]['utterance'].replace('_comma_',',')
+    }
+
     return {
             "prompt": prompts,
             "completion": [{
                 "role": "model",
-                "content": f"{conv_data[-1]['utterance'].replace('_comma_',',')}"
+                "content": json.dumps(desired_completion)
             }]
         }
 
@@ -113,7 +130,7 @@ def make_dataset(
     print('duration: ', time.time() - _start_time)
 
 if __name__ == '__main__':
-    VERSION = "3_0"
+    VERSION = "3_1"
     # empathetic_dialogues
     data = load_dataset("facebook/empathetic_dialogues", trust_remote_code=True)
     traindata = data['train']
