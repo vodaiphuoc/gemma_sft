@@ -5,7 +5,7 @@ from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
 )
-from .mock import MockSFTTrainer
+from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
 
 def training_process(
@@ -43,7 +43,7 @@ def training_process(
             "torch_compile_mode": "default",
             "ddp_find_unused_parameters": True,
         }
-        max_length = 640 if model_key == "gemma" else 512
+        max_length = 256 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
         gradient_accumulation_steps = 3
 
@@ -78,22 +78,22 @@ def training_process(
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
-#         print(f"""
-# DEBUG:
-# raw label: {labels[0]}
-# -------------------------------------
-# """)
+        print(f"""
+DEBUG:
+raw label: {labels[0]}
+-------------------------------------
+""")
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
 
-#         print(f"""
-# DEBUG:
-# decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False)}       
-# decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
-# -------------------------------------
-# """)
+        print(f"""
+DEBUG:
+decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False)}       
+decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
+-------------------------------------
+""")
 
 
         # Some simple post-processing
@@ -109,18 +109,18 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = MockSFTTrainer(
+    trainer = MockSFTTrainerV2(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
-        eval_dataset = converted_validdata,
+        # eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
         callbacks = [LearningRateLogger()],
         args = SFTConfig(
             do_train = True,
-            do_eval = True,
-            eval_strategy = 'epoch',
+            do_eval = False,
+            eval_strategy = 'no',
             save_strategy = 'no',
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
@@ -135,7 +135,7 @@ def training_process(
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            completion_only_loss = True,
+            completion_only_loss = False,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
@@ -159,7 +159,7 @@ def training_process(
     print('start training')
     trainer.train()
     print('run evaluate')
-    output_metrics = trainer.evaluate()
+    output_metrics = trainer.evaluate(converted_validdata)
     print('output metrics: ', output_metrics)
     print('done training, saving model')
     trainer.save_model(checkpoint_save_dir)
