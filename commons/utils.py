@@ -93,6 +93,7 @@ class LearningRateLogger(TrainerCallback):
     """
     def __init__(self):
         self._lr_per_step = []
+        self._loss_per_step = []
 
     def on_step_end(self, args, state, control, **kwargs):
         current_lr = None
@@ -107,6 +108,13 @@ class LearningRateLogger(TrainerCallback):
                 "lr": current_lr
             })
 
+    def on_log(self, args, state, control, logs, **kwargs):
+        if logs.get("loss") is not None:
+            self._loss_per_step.append({
+                "step": state.global_step,
+                "loss": logs.get("loss")
+            })
+
     def on_train_end(self, args, state, control, **kwargs):
         try:
             logging_file_path = os.path.join(args.logging_dir, "learning_rate.json")
@@ -116,8 +124,19 @@ class LearningRateLogger(TrainerCallback):
             print(f"error in on_train_end callback: {e}")
         
         finally:
-            plt.plot(
+            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=[16, 8])
+
+            ax1.plot(
                 [int(ele['step']) for ele in self._lr_per_step],
-                [ele['lr'] for ele in self._lr_per_step]
+                [ele['lr'] for ele in self._lr_per_step],
+                label = 'learning rate'
             )
-            plt.savefig(os.path.join(args.logging_dir, "lr_plot.png"))
+            ax1.legend()
+
+            ax2.plot(
+                [int(ele['step']) for ele in self._loss_per_step],
+                [ele['loss'] for ele in self._loss_per_step],
+                label = 'training loss'
+            )
+            ax2.legend()
+            plt.savefig(os.path.join(args.logging_dir, "lr_loss_plot.png"))

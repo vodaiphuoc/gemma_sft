@@ -78,28 +78,28 @@ def training_process(
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
-#         print(f"""
-# DEBUG:
-# raw label: {labels[0]}
-# -------------------------------------
-# """)
+        print(f"""
+DEBUG:
+raw label: {labels[0]}
+-------------------------------------
+""")
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
 
-#         print(f"""
-# DEBUG:
-# decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False)}       
-# decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
-# -------------------------------------
-# """)
+        print(f"""
+DEBUG:
+decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False).strip()}
+decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
+-------------------------------------
+""")
 
 
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
-        
+        print('eval batch size: ', len(decoded_labels))
         bleu_value = bleu_score(preds=decoded_preds, target=decoded_labels)
         rouge_value = rouge_score(preds=decoded_preds, target=decoded_labels)
         return {
@@ -141,8 +141,8 @@ def training_process(
             jit_mode_eval = False,
             max_seq_length = None,
             lr_scheduler_type = 'cosine_with_min_lr',
-            warmup_steps= 3,
-            lr_scheduler_kwargs = {"min_lr": 1e-6, "num_cycles": 1.5},
+            warmup_steps= 5,
+            lr_scheduler_kwargs = {"min_lr": 5e-5, "num_cycles": 2.5},
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'steps',
