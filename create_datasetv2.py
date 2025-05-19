@@ -8,6 +8,27 @@ import json
 datasets.disable_progress_bars()
 SYSTEM_PROMPT:str = "You are a helpfull assistant always give emotional reponse in conservation"
 
+
+def _get_unique_id(data: Dataset)->List[int]:
+    unique_id = {}
+    CacheDataset = data.select_columns(['conv_id', 'speaker_idx'])
+
+    def _run(row):
+        if unique_id.get(row['conv_id']) is None:
+            unique_id[row['conv_id']] = set()
+        else:
+            if row['speaker_idx'] not in unique_id.get(row['conv_id']):
+                unique_id.get(row['conv_id']).update(set([row['speaker_idx']]))
+
+    CacheDataset = CacheDataset.map(lambda x: _run(x))
+
+    return [
+        _id
+        for _id, _val 
+        in unique_id.items() 
+        if len(_val) == 2
+    ]
+
 def _process_history(conv_data: List[Dict[str, Any]])->Dict[str, List[Dict[str,str]]]:
     _history = [
         {
@@ -50,23 +71,14 @@ def make_dataset(
         dataset_type:str = Literal['train','valid','test'],
         version:str = "2.0"
     )->datasets.arrow_dataset.Dataset:
+
+    init_unique_id_list = _get_unique_id(data= data)
     unique_conv_id = sorted(
-        set(traindata['conv_id']),
+        set(init_unique_id_list),
         key= lambda x: [int(ele.split(':')[-1]) for ele in x.split('_')]
     )
     print('number unique conv id: ', len(unique_conv_id))
-
-    # update unique id with 2 speakers only
-    unique_conv_id = [unique_id
-    for unique_id in unique_conv_id
-    if len(set([
-            ele['speaker_idx'] 
-            for ele in 
-            data.filter(lambda x: x['conv_id'] == unique_id).sort("utterance_idx")
-    ])) == 2
-    ]
-
-    assert unique_conv_id > 1, f"{dataset_type}"
+    assert len(unique_conv_id) > 1, f"{dataset_type}"
 
     def _conv_gen(conv_id:str):
         conversation_data = data.filter(lambda x: x['conv_id'] == conv_id).sort("utterance_idx")
@@ -84,13 +96,14 @@ def make_dataset(
                     yield ele
             else:
                 continue
-
+    
+    print('building dataset')
     import time, os
     _start_time = time.time()
     new_data = Dataset.from_generator(
         _dataset_generator, 
         gen_kwargs = {'unique_conv_id': unique_conv_id},
-        num_proc = 4
+        num_proc = 8
     )
 
     # for ele in new_data:
