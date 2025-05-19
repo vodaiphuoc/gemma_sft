@@ -133,6 +133,12 @@ class LearningRateLogger(TrainerCallback):
             )
             ax1.legend()
 
+            self._loss_per_step = [
+                ele for ele in \
+                self._loss_per_step \
+                if ele['loss'] < 3.0
+            ]
+
             ax2.plot(
                 [int(ele['step']) for ele in self._loss_per_step],
                 [ele['loss'] for ele in self._loss_per_step],

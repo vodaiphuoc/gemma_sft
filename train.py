@@ -33,7 +33,7 @@ def main(
         num_train_epochs = 2,
         train_batch_size = train_batch_size,
         eval_batch_size = eval_batch_size,
-        learning_rate = 2e-4,
+        learning_rate = 5e-4,
         fsdp_config = fsdp_config
     )
 
