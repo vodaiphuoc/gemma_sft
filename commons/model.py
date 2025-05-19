@@ -75,7 +75,7 @@ def get_model_tokenizer(
             distribution_type = distribution_type
         )
         lora_config = LoraConfig(
-            **LORA_PARAMS1
+            **LORA_PARAMS2
         )
         return model, tokenizer, lora_config
 

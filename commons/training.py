@@ -7,7 +7,9 @@ from .constants import (
 )
 from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
-
+from transformers import (
+    PrinterCallback
+)
 def training_process(
         pre_init: tuple,
         model_key:str, 
@@ -90,8 +92,8 @@ raw label: {labels[0]}
 
         print(f"""
 DEBUG:
-decoded pred: {tokenizer.decode(preds[0], skip_special_tokens=False).strip()}
-decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
+decoded pred: {tokenizer.decode(preds[2], skip_special_tokens=False).strip()}
+decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
 -------------------------------------
 """)
 
@@ -126,6 +128,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
             dataset_num_proc = 4,
+            data_seed = 400,
             dataloader_pin_memory = True,
             dataloader_drop_last=True,
             dataloader_num_workers = 2,
@@ -135,7 +138,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            completion_only_loss = True,
+            completion_only_loss = False,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
@@ -144,6 +147,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             warmup_steps= 10,
             lr_scheduler_kwargs = {"min_lr": 1e-8, "num_cycles": 0.5},
             optim = 'adamw_torch_fused',
+            weight_decay = 0.01,
             label_names=["labels"],
             logging_strategy = 'steps',
             logging_steps = 1,
@@ -157,7 +161,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
         ),
         peft_config=lora_config, # lora config
     )
-
+    trainer.remove_callback(PrinterCallback)
     print('start training')
     trainer.train()
     print('run evaluate')

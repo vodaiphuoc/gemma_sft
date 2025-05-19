@@ -6,7 +6,7 @@ MODEL_KEY2IDS = {
 }
 
 LORA_PARAMS1 = {
-    "r":8,
+    "r":16,
     "lora_alpha": 32,
     "lora_dropout": 0.05,
     "bias":"none",
@@ -18,7 +18,7 @@ LORA_PARAMS1 = {
 LORA_PARAMS2 = {
     "r":16,
     "lora_alpha": 32,
-    "lora_dropout": 0.01,
+    "lora_dropout": 0.02,
     "bias":"none",
     "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj"],
     "task_type": "CAUSAL_LM"
