@@ -109,7 +109,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = MockSFTTrainerV2(
+    trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -135,7 +135,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            completion_only_loss = False,
+            completion_only_loss = True,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
@@ -146,6 +146,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False).strip()}
             optim = 'adamw_torch_fused',
             label_names=["labels"],
             logging_strategy = 'steps',
+            logging_steps = 1,
             logging_dir = logging_dir,
             report_to = "none",
             output_dir = checkpoint_save_dir,
