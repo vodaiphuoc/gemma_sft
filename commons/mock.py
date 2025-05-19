@@ -154,7 +154,7 @@ class MockSFTTrainerV2(SFTTrainer):
 
     def get_eval_dataloader(
             self, 
-            eval_dataset: datasets.Dataset,
+            eval_dataset: datasets.Dataset = None,
         ) -> DataLoader:
         """
         Overide default method

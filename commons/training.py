@@ -113,7 +113,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
-        # eval_dataset = converted_validdata,
+        eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
         callbacks = [LearningRateLogger()],
@@ -159,7 +159,7 @@ decoded label: {tokenizer.decode(labels[0], skip_special_tokens=False)}
     print('start training')
     trainer.train()
     print('run evaluate')
-    output_metrics = trainer.evaluate(converted_validdata)
+    output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
     print('done training, saving model')
     trainer.save_model(checkpoint_save_dir)
