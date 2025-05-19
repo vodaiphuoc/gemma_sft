@@ -7,7 +7,7 @@ from transformers.utils import is_datasets_available
 import torch
 from torch.utils.data import DataLoader, IterableDataset
 from transformers.data.data_collator import DataCollatorMixin, PreTrainedTokenizerBase
-from utils import pad
+from .utils import pad
 
 @dataclasses.dataclass
 class MockDataCollatorForLanguageModeling(DataCollatorMixin):
