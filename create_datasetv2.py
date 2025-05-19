@@ -56,18 +56,24 @@ def make_dataset(
     )
     print('number unique conv id: ', len(unique_conv_id))
 
+    # update unique id with 2 speakers only
+    unique_conv_id = [unique_id
+    for unique_id in unique_conv_id
+    if len(set([
+            ele['speaker_idx'] 
+            for ele in 
+            data.filter(lambda x: x['conv_id'] == unique_id).sort("utterance_idx")
+    ])) == 2
+    ]
+
+    assert unique_conv_id > 1, f"{dataset_type}"
+
     def _conv_gen(conv_id:str):
         conversation_data = data.filter(lambda x: x['conv_id'] == conv_id).sort("utterance_idx")
-        num_speakers = len(set([ele['speaker_idx'] for ele in conversation_data]))
-
-        if num_speakers == 2:
-            _select_ids = list(range(2, len(conversation_data)+1, 2))
-            accum_data = list(itertools.accumulate(conversation_data, _accum_handler, initial=[]))
-            for _id in _select_ids:
-                yield _process_history(accum_data[_id])
-    
-        else:
-            return None
+        _select_ids = list(range(2, len(conversation_data)+1, 2))
+        accum_data = list(itertools.accumulate(conversation_data, _accum_handler, initial=[]))
+        for _id in _select_ids:
+            yield _process_history(accum_data[_id])
 
     def _dataset_generator(unique_conv_id: Set):
         # print(len(unique_conv_id), unique_conv_id[0])
