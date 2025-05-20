@@ -77,6 +77,8 @@ def training_process(
         if isinstance(preds, tuple):
             preds = preds[0]
 
+        print(f'preds shape {preds.shape}, labels shape: {labels.shape}')
+
         preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
