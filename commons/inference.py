@@ -48,7 +48,7 @@ class Serving(object):
             inputs = self.tokenizer(
                 row['prompt'],
                 add_special_tokens = False,
-                padding = True,
+                padding = "max_length",
                 max_length= self.max_length,
                 padding_side = 'left',
                 return_tensors = 'pt'
