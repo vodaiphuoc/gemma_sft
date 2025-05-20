@@ -65,7 +65,7 @@ class Serving(object):
                 "answer": self.tokenizer.batch_decode(outputs)
             }
 
-        dataset = dataset.map(lambda x: _infer(x), batch_size = 8, batched = True)
+        dataset = dataset.map(lambda x: _infer(x), batch_size = 2, batched = True)
         # save results
         dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
