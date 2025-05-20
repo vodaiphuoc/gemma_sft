@@ -40,6 +40,7 @@ class Serving(object):
             mode=torch_compile_config['torch_compile_mode'],
             backend=torch_compile_config['torch_compile_backend']
         )
+        self.model.eval()
 
         self.result_dir = result_dir
         self.max_length = max_length
@@ -54,6 +55,7 @@ class Serving(object):
         dataset = self._prepare_dataset(dataset)
         print('done init test dataset')
         def _infer(row):
+            print('batch prompt: ', len(row['prompt']))
             inputs = self.tokenizer(
                 row['prompt'],
                 add_special_tokens = False,
