@@ -17,7 +17,6 @@ from transformers import (
 
 import gc
 import torch
-import accelerator
 
 def training_process(
         pre_init: tuple,
@@ -216,7 +215,7 @@ final label: {decoded_labels[6]}
     gc.collect()
     torch.cuda.empty_cache()
     
-    if accelerator.is_main_process:
+    if trainer.accelerator.is_main_process:
         s = Serving(model_key = model_key,
             distribution_device = distribution_device,
             distribution_type = distribution_type,
