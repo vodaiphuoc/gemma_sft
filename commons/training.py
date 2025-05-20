@@ -45,7 +45,7 @@ def training_process(
             "torch_compile_mode": "default",
             "ddp_find_unused_parameters": True,
         }
-        max_length = 256 if model_key == "gemma" else 512
+        max_length = 512 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
         gradient_accumulation_steps = 6
 
@@ -113,7 +113,7 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSFTTrainerV2(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
