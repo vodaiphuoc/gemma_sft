@@ -55,7 +55,7 @@ def training_process(
         }
         max_length = 384 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
-        gradient_accumulation_steps = 6
+        gradient_accumulation_steps = 4
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -211,7 +211,7 @@ final label: {decoded_labels[6]}
     from accelerate.utils import release_memory
     release_memory(trainer.model_wrapped)
     release_memory(trainer.model)
-    
+
     del model
     del tokenizer
     gc.collect()
