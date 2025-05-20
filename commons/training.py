@@ -1,4 +1,5 @@
 import os
+import datetime
 from .model import get_model_tokenizer
 from .dataset import get_datasets
 from .constants import (
@@ -79,9 +80,13 @@ def training_process(
 
         print(f'preds shape {preds.shape}, labels shape: {labels.shape}')
 
-        preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
+        # get mask from labels
+        mask_ids = np.where(labels == -100)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
+        preds[mask_ids] = -100
+        preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
+
         print(f"""
 DEBUG:
 raw label: {labels[0]}
@@ -171,4 +176,6 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
     output_metrics = trainer.evaluate()
     print('output metrics: ', output_metrics)
     print('done training, saving model')
-    trainer.save_model(checkpoint_save_dir)
+    
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    trainer.save_model(os.path.join(checkpoint_save_dir, current_time))

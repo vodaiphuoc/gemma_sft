@@ -136,7 +136,7 @@ class LearningRateLogger(TrainerCallback):
             self._loss_per_step = [
                 ele for ele in \
                 self._loss_per_step \
-                if ele['loss'] < 3.0
+                if ele['loss'] < 1.0
             ]
 
             ax2.plot(
