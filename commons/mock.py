@@ -151,8 +151,7 @@ class MockSFTTrainerV2(SFTTrainer):
         super().__init__(processing_class = processing_class, *args, **kwargs)
         pad_token = processing_class.pad_token
         self._tokenizer_pad_token_id = processing_class.convert_tokens_to_ids(pad_token)
-
-        print('num trainable params: ',self.model.print_trainable_parameters())
+        self.model.print_trainable_parameters()
 
     def get_eval_dataloader(
             self, 
