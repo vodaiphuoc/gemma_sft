@@ -6,6 +6,9 @@ from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
 )
+
+from .inference import Serving
+
 from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
 from transformers import (
@@ -178,4 +181,13 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
     print('done training, saving model')
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    trainer.save_model(os.path.join(checkpoint_save_dir, current_time))
+    current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
+    trainer.save_model(current_ckpt_dir)
+
+    s = Serving(model_key = model_key,
+        distribution_device = distribution_device,
+        distribution_type = distribution_type,
+        checkpoint_dir = current_ckpt_dir,
+        result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
+    )
+    s.inference(converted_testdata)
