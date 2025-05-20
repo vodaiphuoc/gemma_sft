@@ -7,7 +7,7 @@ from .constants import (
     DISTRIBUTION_DEVICE,
 )
 
-from .inference import Serving
+# from .inference import Serving
 
 from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
@@ -209,17 +209,17 @@ final label: {decoded_labels[6]}
     trainer.save_model(current_ckpt_dir)
 
     # cleanup
-    del trainer
-    del model
-    del tokenizer
-    gc.collect()
-    torch.cuda.empty_cache()
+    # del trainer
+    # del model
+    # del tokenizer
+    # gc.collect()
+    # torch.cuda.empty_cache()
     
-    if trainer.accelerator.is_main_process:
-        s = Serving(model_key = model_key,
-            distribution_device = distribution_device,
-            distribution_type = distribution_type,
-            checkpoint_dir = current_ckpt_dir,
-            result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
-        )
-        s.inference(converted_testdata)
+    # if trainer.accelerator.is_main_process:
+    #     s = Serving(model_key = model_key,
+    #         distribution_device = distribution_device,
+    #         distribution_type = distribution_type,
+    #         checkpoint_dir = current_ckpt_dir,
+    #         result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
+    #     )
+    #     s.inference(converted_testdata)
