@@ -227,6 +227,7 @@ final label: {decoded_labels[6]}
             distribution_type = distribution_type,
             max_length = max_length,
             checkpoint_dir = current_ckpt_dir,
-            result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
+            result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time),
+            torch_compile_config = torch_compile_config
         )
         s.inference(converted_testdata)

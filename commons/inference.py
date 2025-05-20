@@ -25,7 +25,8 @@ class Serving(object):
             distribution_type: DISTRIBUTION_TYPE,
             max_length:int,
             checkpoint_dir:str,
-            result_dir: str
+            result_dir: str,
+            torch_compile_config: dict
             ):
         print("Serving init on device: ", device)
         base_model, self.tokenizer, _ = get_model_tokenizer(
@@ -33,7 +34,13 @@ class Serving(object):
             distribution_device= distribution_device, 
             distribution_type = distribution_type
         )
-        self.model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+        merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+        self.model = torch.compile(
+            merged_model, 
+            mode=torch_compile_config['torch_compile_mode'],
+            backend=torch_compile_config['torch_compile_backend']
+        )
+
         self.result_dir = result_dir
         self.max_length = max_length
 
@@ -45,7 +52,7 @@ class Serving(object):
 
     def inference(self, dataset: Dataset):
         dataset = self._prepare_dataset(dataset)
-
+        print('done init test dataset')
         def _infer(row):
             inputs = self.tokenizer(
                 row['prompt'],
@@ -66,7 +73,12 @@ class Serving(object):
                 "answer": self.tokenizer.batch_decode(outputs)
             }
 
-        dataset = dataset.map(lambda x: _infer(x), batch_size = 2, batched = True)
+        dataset = dataset.map(
+            lambda x: _infer(x), 
+            batch_size = 2, 
+            batched = True,
+            desc="generating answers"
+        )
         # save results
         dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
