@@ -6,6 +6,7 @@ from trl import apply_chat_template
 import torch
 from torchmetrics.functional.text import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
+import os 
 
 class Serving(object):
     _generation_config = {
@@ -64,7 +65,7 @@ class Serving(object):
 
         dataset = dataset.map(lambda x: _infer(x), batch_size = 8, batched = True)
         # save results
-        dataset.to_json(self.result_dir)
+        dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
         bleu_value = bleu_score(preds=dataset['answer'], target=dataset['completion'])
         rouge_value = rouge_score(preds=dataset['answer'], target=dataset['completion'])
