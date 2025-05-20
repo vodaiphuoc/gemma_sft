@@ -10,7 +10,7 @@ import os
 
 class Serving(object):
     _generation_config = {
-        "max_new_tokens": 60,
+        "max_new_tokens": 128,
         "do_sample": True,
         "num_beams": 2,
         "temperature": 0.1,
@@ -27,6 +27,7 @@ class Serving(object):
             checkpoint_dir:str,
             result_dir: str
             ):
+        print("Serving init on device: ", device)
         base_model, self.tokenizer, _ = get_model_tokenizer(
             model_key= model_key, 
             distribution_device= distribution_device, 
