@@ -208,7 +208,10 @@ final label: {decoded_labels[6]}
     trainer.save_model(current_ckpt_dir)
 
     # cleanup
-    del trainer
+    from accelerate.utils import release_memory
+    release_memory(trainer.model_wrapped)
+    release_memory(trainer.model)
+    
     del model
     del tokenizer
     gc.collect()
