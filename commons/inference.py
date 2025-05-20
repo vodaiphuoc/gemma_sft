@@ -17,7 +17,8 @@ class Serving(object):
     }
 
     def __init__(
-            self, 
+            self,
+            device: torch.device, 
             model_key:str,
             distribution_device: DISTRIBUTION_DEVICE,
             distribution_type: DISTRIBUTION_TYPE,
@@ -29,7 +30,7 @@ class Serving(object):
             distribution_device= distribution_device, 
             distribution_type = distribution_type
         )
-        self.model = PeftModel.from_pretrained(base_model, checkpoint_dir)
+        self.model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
         self.result_dir = result_dir
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
@@ -42,11 +43,11 @@ class Serving(object):
         dataset = self._prepare_dataset(dataset)
 
         def _infer(row):
-            inputs = self.tokenizer(row['prompt'],add_special_tokens = False)
+            inputs = self.tokenizer(row['prompt'],add_special_tokens = False).to(self.model.device)
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
-                    generation_config = self._generation_config
+                    **self._generation_config
                 )
             return {
                 "answer": self.tokenizer.batch_decode(outputs)

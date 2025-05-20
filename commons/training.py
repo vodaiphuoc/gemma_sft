@@ -218,7 +218,9 @@ final label: {decoded_labels[6]}
     torch.cuda.empty_cache()
     
     if trainer.accelerator.is_main_process:
-        s = Serving(model_key = model_key,
+        s = Serving(
+            device = trainer.accelerator.device,
+            model_key = model_key,
             distribution_device = distribution_device,
             distribution_type = distribution_type,
             checkpoint_dir = current_ckpt_dir,
