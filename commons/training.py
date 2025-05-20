@@ -50,7 +50,7 @@ def training_process(
         torch_compile_config = {
             "torch_compile": True,
             "torch_compile_backend": "inductor",
-            "torch_compile_mode": "max-autotune"
+            "torch_compile_mode": "default"
         }
         max_length = 2024 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
@@ -157,6 +157,9 @@ final label: {decoded_labels[6]}
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
             dataset_num_proc = 4,
+            dataset_kwargs = {
+                "keep_in_memory": True
+            },
             data_seed = 400,
             dataloader_pin_memory = True,
             dataloader_drop_last=True,
