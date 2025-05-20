@@ -7,7 +7,7 @@ from .constants import (
     DISTRIBUTION_DEVICE,
 )
 
-# from .inference import Serving
+from .inference import Serving
 
 from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
