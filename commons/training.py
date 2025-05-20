@@ -85,14 +85,10 @@ def training_process(
         if isinstance(preds, tuple):
             preds = preds[0]
 
-        print(f'preds shape {preds.shape}, labels shape: {labels.shape}')
-
-        # get mask from labels
-        mask_ids = np.where(labels == -100)
+        # print(f'preds shape {preds.shape}, labels shape: {labels.shape}')
+        preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
-        preds[mask_ids] = -100
-        preds = np.where(preds != -100, preds, tokenizer.pad_token_id)
 
         print(f"""
 DEBUG:
@@ -145,7 +141,7 @@ final label: {decoded_labels[6]}
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = MockSFTTrainerV2(
+    trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -172,7 +168,7 @@ final label: {decoded_labels[6]}
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            completion_only_loss = False,
+            completion_only_loss = True,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,
