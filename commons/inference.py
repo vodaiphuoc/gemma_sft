@@ -50,7 +50,7 @@ class Serving(object):
                 add_special_tokens = False,
                 padding = True,
                 max_length= self.max_length,
-                padding_side = 'right',
+                padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.model.device)
             with torch.inference_mode():
@@ -62,31 +62,20 @@ class Serving(object):
                 "answer": self.tokenizer.batch_decode(outputs)
             }
 
-        dataset = dataset.map(lambda x: _infer(x), batch_size = 4, batched = True)
+        dataset = dataset.map(lambda x: _infer(x), batch_size = 8, batched = True)
+        # save results
+        dataset.to_json(self.result_dir)
 
+        bleu_value = bleu_score(preds=dataset['answer'], target=dataset['completion'])
+        rouge_value = rouge_score(preds=dataset['answer'], target=dataset['completion'])
 
-        def _get_metric(row):
-            preds = row['answer']
-            labels = row['completion']
-            bleu_value = bleu_score(preds=preds, target=labels)
-            rouge_value = rouge_score(preds=preds, target=labels)
-            return {
+        # get mean metrics
+        report_metrics = {
                 "bleu": bleu_value,
                 "rouge1_fmeasure": rouge_value['rouge1_fmeasure'],
                 "rouge2_fmeasure": rouge_value['rouge2_fmeasure'],
                 "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
             }
-
-        dataset = dataset.map(lambda x: _get_metric(x), batched = True)
-
-        # save results
-        dataset.to_json(self.result_dir)
-
-        # get mean metrics
-        report_metrics = {
-            metric_name: sum(dataset[metric_name])/len(dataset[metric_name])
-            for metric_name in ['bleu', 'rouge1_fmeasure','rouge2_fmeasure','rougeL_fmeasure']
-        }
         
         print('testing result')
         print(report_metrics)
