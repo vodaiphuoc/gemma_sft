@@ -6,8 +6,8 @@ MODEL_KEY2IDS = {
 }
 
 LORA_PARAMS1 = {
-    "r":16,
-    "lora_alpha": 32,
+    "r":8,
+    "lora_alpha": 512,
     "lora_dropout": 0.05,
     "bias":"none",
     "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj", "gate_proj", "down_proj"],
