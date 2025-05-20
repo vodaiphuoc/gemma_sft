@@ -177,5 +177,5 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
     print('output metrics: ', output_metrics)
     print('done training, saving model')
     
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     trainer.save_model(os.path.join(checkpoint_save_dir, current_time))

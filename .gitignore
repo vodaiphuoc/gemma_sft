@@ -5,3 +5,4 @@ myenv/
 .temp*/
 *.pyc
 data/1_0/
+__pycache__/
