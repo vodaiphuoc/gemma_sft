@@ -52,9 +52,9 @@ def training_process(
             "torch_compile_backend": "inductor",
             "torch_compile_mode": "default"
         }
-        max_length = 2024 if model_key == "gemma" else 512
+        max_length = 2176 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
-        gradient_accumulation_steps = 4
+        gradient_accumulation_steps = 8
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -140,7 +140,7 @@ final label: {decoded_labels[6]}
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -209,7 +209,8 @@ final label: {decoded_labels[6]}
     from accelerate.utils import release_memory
     release_memory(trainer.model_wrapped)
     release_memory(trainer.model)
-
+    release_memory(trainer.optimizer)
+    
     del model
     del tokenizer
     gc.collect()
