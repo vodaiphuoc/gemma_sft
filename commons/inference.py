@@ -22,6 +22,7 @@ class Serving(object):
             model_key:str,
             distribution_device: DISTRIBUTION_DEVICE,
             distribution_type: DISTRIBUTION_TYPE,
+            max_length:int,
             checkpoint_dir:str,
             result_dir: str
             ):
@@ -32,6 +33,7 @@ class Serving(object):
         )
         self.model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
         self.result_dir = result_dir
+        self.max_length = max_length
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         return dataset.map(
@@ -43,7 +45,14 @@ class Serving(object):
         dataset = self._prepare_dataset(dataset)
 
         def _infer(row):
-            inputs = self.tokenizer(row['prompt'],add_special_tokens = False).to(self.model.device)
+            inputs = self.tokenizer(
+                row['prompt'],
+                add_special_tokens = False,
+                padding = True,
+                max_length= self.max_length,
+                padding_side = 'right',
+                return_tensors = 'pt'
+            ).to(self.model.device)
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 

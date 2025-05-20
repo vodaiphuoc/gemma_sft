@@ -223,6 +223,7 @@ final label: {decoded_labels[6]}
             model_key = model_key,
             distribution_device = distribution_device,
             distribution_type = distribution_type,
+            max_length = max_length,
             checkpoint_dir = current_ckpt_dir,
             result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
         )
