@@ -14,6 +14,11 @@ from .utils import LearningRateLogger
 from transformers import (
     PrinterCallback
 )
+
+import gc
+import torch
+import accelerator
+
 def training_process(
         pre_init: tuple,
         model_key:str, 
@@ -101,6 +106,7 @@ raw label: {labels[0]}
 
 
         print(f"""
+-------------------------------------
 DEBUG:
 decoded pred: {tokenizer.decode(preds[2], skip_special_tokens=False).strip()}
 decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
@@ -111,7 +117,26 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
         # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
-        print('eval batch size: ', len(decoded_labels))
+        
+
+
+        print(f"""
+-------------------------------------
+DEBUG:
+final pred: {decoded_preds[5]}
+final label: {decoded_labels[5]}
+-------------------------------------
+""")
+
+        print(f"""
+-------------------------------------
+DEBUG:
+final pred: {decoded_preds[6]}
+final label: {decoded_labels[6]}
+-------------------------------------
+""")
+
+
         bleu_value = bleu_score(preds=decoded_preds, target=decoded_labels)
         rouge_value = rouge_score(preds=decoded_preds, target=decoded_labels)
         return {
@@ -184,10 +209,18 @@ decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
     current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
     trainer.save_model(current_ckpt_dir)
 
-    s = Serving(model_key = model_key,
-        distribution_device = distribution_device,
-        distribution_type = distribution_type,
-        checkpoint_dir = current_ckpt_dir,
-        result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
-    )
-    s.inference(converted_testdata)
+    # cleanup
+    del trainer
+    del model
+    del tokenizer
+    gc.collect()
+    torch.cuda.empty_cache()
+    
+    if accelerator.is_main_process:
+        s = Serving(model_key = model_key,
+            distribution_device = distribution_device,
+            distribution_type = distribution_type,
+            checkpoint_dir = current_ckpt_dir,
+            result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time)
+        )
+        s.inference(converted_testdata)

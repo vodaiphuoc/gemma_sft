@@ -52,7 +52,7 @@ class Serving(object):
                 "answer": self.tokenizer.batch_decode(outputs)
             }
 
-        dataset = dataset.map(lambda x: _infer(x), batched = True)
+        dataset = dataset.map(lambda x: _infer(x), batch_size = 4, batched = True)
 
 
         def _get_metric(row):
