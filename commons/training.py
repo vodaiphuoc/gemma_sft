@@ -140,7 +140,7 @@ final label: {decoded_labels[6]}
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = MockSFTTrainer(
+    trainer = SFTTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -210,7 +210,7 @@ final label: {decoded_labels[6]}
     release_memory(trainer.model_wrapped)
     release_memory(trainer.model)
     release_memory(trainer.optimizer)
-    
+
     del model
     del tokenizer
     gc.collect()
