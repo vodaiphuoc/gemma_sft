@@ -50,10 +50,9 @@ def training_process(
         torch_compile_config = {
             "torch_compile": True,
             "torch_compile_backend": "inductor",
-            "torch_compile_mode": "default",
-            "ddp_find_unused_parameters": True,
+            "torch_compile_mode": "max-autotune"
         }
-        max_length = 384 if model_key == "gemma" else 512
+        max_length = 2024 if model_key == "gemma" else 512
         dataloader_prefetch_factor = 2
         gradient_accumulation_steps = 4
 
@@ -168,7 +167,7 @@ final label: {decoded_labels[6]}
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
-            completion_only_loss = True,
+            completion_only_loss = False,
             packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
             eval_packing = False,
             jit_mode_eval = False,

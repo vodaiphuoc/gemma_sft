@@ -50,10 +50,12 @@ class Serving(object):
                 row['prompt'],
                 add_special_tokens = False,
                 padding = "max_length",
+                truncation= True,
                 max_length= self.max_length,
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.model.device)
+            
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 

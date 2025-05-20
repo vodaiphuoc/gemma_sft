@@ -40,9 +40,11 @@ def _get_pretrained_model(
                 bnb_4bit_quant_storage=torch.bfloat16
             )
             loading_dtype = torch.bfloat16
+        
         elif distribution_type == "ddp":
             quantization_config=None
             loading_dtype = torch.float32
+        
         else:
             raise NotImplementedError
 
