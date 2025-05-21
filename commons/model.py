@@ -43,7 +43,7 @@ def _get_pretrained_model(
         
         elif distribution_type == "ddp":
             quantization_config=None
-            loading_dtype = torch.float32
+            loading_dtype = torch.float16
         
         else:
             raise NotImplementedError
