@@ -56,7 +56,7 @@ class Serving(object):
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
         return dataset.map(
-            lambda x: self._tokenize(x['prompt'])
+            lambda x: self._tokenize(x)
         )
 
     def inference(self, dataset: Dataset):
