@@ -45,17 +45,19 @@ class Serving(object):
         self.max_length = max_length
         print('done init')
 
-    def _prepare_dataset(self, dataset: Dataset)->Dataset:
-        dataset = dataset.select(list(range(12)))
-
-        return dataset.map(
-            lambda x: {
-                "input_prompt":self.tokenizer.apply_chat_template(
-                    x, 
+    def _tokenize(self, text):
+        print(text)
+        return self.tokenizer.apply_chat_template(
+                    text, 
                     tokenize = False,
                     add_generation_prompt= True
                 )
-            }
+
+    def _prepare_dataset(self, dataset: Dataset)->Dataset:
+        dataset = dataset.select(list(range(12)))
+        print(dataset[0])
+        return dataset.map(
+            lambda x: { "input_prompt": self._tokenize(x)}
         )
 
     def inference(self, dataset: Dataset):
