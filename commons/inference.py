@@ -34,6 +34,7 @@ class Serving(object):
             distribution_device= distribution_device, 
             distribution_type = distribution_type
         )
+        base_model = base_model.to(torch.float16)
         merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
         self.model = torch.compile(
             merged_model, 
@@ -79,9 +80,9 @@ class Serving(object):
                     **inputs, 
                     **self._generation_config
                 )
-
+            
             return {
-                "answer": self.tokenizer.batch_decode(outputs, skip_special_tokens = True)
+                "answer": self.tokenizer.batch_decode(outputs[:, inputs['input_ids'].shape[1]:], skip_special_tokens = True)
             }
 
         dataset = dataset.map(
