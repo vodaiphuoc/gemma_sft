@@ -1,6 +1,7 @@
 from .model import get_model_tokenizer
 from .constants import DISTRIBUTION_DEVICE, DISTRIBUTION_TYPE
 from peft import PeftModel
+from trl import apply_chat_template
 from datasets import Dataset
 import torch
 from torchmetrics.functional.text import bleu_score
@@ -45,17 +46,17 @@ class Serving(object):
         self.max_length = max_length
         print('done init')
 
-    def _tokenize(self, text):
-        return self.tokenizer.apply_chat_template(
-                    text, 
-                    tokenize = False,
-                    add_generation_prompt= True
-                )
+    def _tokenize(self, row):
+        outputs = apply_chat_template(row, self.tokenizer)
+        return {
+            "input_prompt": outputs['prompt'],
+            "desired_completion": outputs['completion'],
+        }
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
         return dataset.map(
-            lambda x: { "input_prompt": self._tokenize(x['prompt'])}
+            lambda x: self._tokenize(x['prompt'])
         )
 
     def inference(self, dataset: Dataset):
@@ -92,11 +93,8 @@ class Serving(object):
         # save results
         dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
-        print(dataset['answer'][0])
-        print(dataset['completion'][0])
-
-        bleu_value = bleu_score(preds=dataset['answer'], target=dataset['completion'])
-        rouge_value = rouge_score(preds=dataset['answer'], target=dataset['completion'])
+        bleu_value = bleu_score(preds=dataset['answer'], target=dataset['desired_completion'])
+        rouge_value = rouge_score(preds=dataset['answer'], target=dataset['desired_completion'])
 
         # get mean metrics
         report_metrics = {
