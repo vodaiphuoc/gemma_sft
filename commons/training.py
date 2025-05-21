@@ -193,17 +193,17 @@ final label: {decoded_labels[6]}
         ),
         peft_config=lora_config, # lora config
     )
-    # trainer.remove_callback(PrinterCallback)
-    # print('start training')
-    # trainer.train()
-    # print('run evaluate')
-    # output_metrics = trainer.evaluate()
-    # print('output metrics: ', output_metrics)
-    # print('done training, saving model')
+    trainer.remove_callback(PrinterCallback)
+    print('start training')
+    trainer.train()
+    print('run evaluate')
+    output_metrics = trainer.evaluate()
+    print('output metrics: ', output_metrics)
+    print('done training, saving model')
     
-    # current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    # current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
-    # trainer.save_model(current_ckpt_dir)
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
+    trainer.save_model(current_ckpt_dir)
 
     # cleanup
     from accelerate.utils import release_memory

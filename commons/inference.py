@@ -2,7 +2,6 @@ from .model import get_model_tokenizer
 from .constants import DISTRIBUTION_DEVICE, DISTRIBUTION_TYPE
 from peft import PeftModel
 from datasets import Dataset
-from trl import apply_chat_template
 import torch
 from torchmetrics.functional.text import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
@@ -48,8 +47,8 @@ class Serving(object):
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
         return dataset.map(
-            apply_chat_template,
-            fn_kwargs={"tokenizer": self.tokenizer}
+            lambda x: self.tokenizer.apply_chat_template(x, add_generation_prompt= True),
+            batched = True
         )
 
     def inference(self, dataset: Dataset):
@@ -72,6 +71,7 @@ class Serving(object):
                     **inputs, 
                     **self._generation_config
                 )
+
             return {
                 "answer": self.tokenizer.batch_decode(outputs, skip_special_tokens = True)
             }
@@ -98,4 +98,3 @@ class Serving(object):
         
         print('testing result')
         print(report_metrics)
-            
