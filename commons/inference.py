@@ -47,7 +47,9 @@ class Serving(object):
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
         return dataset.map(
-            lambda x: self.tokenizer.apply_chat_template(x, add_generation_prompt= True),
+            lambda x: {
+                "input_prompt":self.tokenizer.apply_chat_template(x, add_generation_prompt= True)
+            },
             batched = True
         )
 
@@ -55,9 +57,9 @@ class Serving(object):
         dataset = self._prepare_dataset(dataset)
         print('done init test dataset')
         def _infer(row):
-            print('batch prompt: ', len(row['prompt']))
+            print('batch prompt: ', len(row['input_prompt']))
             inputs = self.tokenizer(
-                row['prompt'],
+                row['input_prompt'],
                 add_special_tokens = False,
                 padding = "max_length",
                 truncation= True,
