@@ -10,11 +10,11 @@ import os
 
 class Serving(object):
     _generation_config = {
-        "max_new_tokens": 128,
+        "max_new_tokens": 64,
         "do_sample": True,
-        "num_beams": 2,
-        "temperature": 0.1,
-        "length_penalty": -0.2
+        "temperature": 1.0,
+        "top_k": 64,
+        "top_p": 0.95
     }
 
     def __init__(
@@ -73,7 +73,7 @@ class Serving(object):
                     **self._generation_config
                 )
             return {
-                "answer": self.tokenizer.batch_decode(outputs)
+                "answer": self.tokenizer.batch_decode(outputs, skip_special_tokens)
             }
 
         dataset = dataset.map(
