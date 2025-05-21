@@ -46,7 +46,6 @@ class Serving(object):
         print('done init')
 
     def _tokenize(self, text):
-        print(text)
         return self.tokenizer.apply_chat_template(
                     text, 
                     tokenize = False,
@@ -55,9 +54,8 @@ class Serving(object):
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
-        print(dataset[0])
         return dataset.map(
-            lambda x: { "input_prompt": self._tokenize(x)}
+            lambda x: { "input_prompt": self._tokenize(x['prompt'])}
         )
 
     def inference(self, dataset: Dataset):
