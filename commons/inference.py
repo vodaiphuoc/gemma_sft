@@ -49,7 +49,11 @@ class Serving(object):
         dataset = dataset.select(list(range(12)))
         return dataset.map(
             lambda x: {
-                "input_prompt":self.tokenizer.apply_chat_template(x, add_generation_prompt= True)
+                "input_prompt":self.tokenizer.apply_chat_template(
+                    x, 
+                    tokenize = False,
+                    add_generation_prompt= True
+                )
             },
             batched = True
         )
