@@ -92,7 +92,9 @@ class Serving(object):
         # save results
         dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
-        print(dataset['answer'])
+        print(dataset['answer'][0])
+        print(dataset['completion'][0])
+
         bleu_value = bleu_score(preds=dataset['answer'], target=dataset['completion'])
         rouge_value = rouge_score(preds=dataset['answer'], target=dataset['completion'])
 
