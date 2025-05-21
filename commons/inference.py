@@ -43,6 +43,7 @@ class Serving(object):
 
         self.result_dir = result_dir
         self.max_length = max_length
+        print('done init')
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
