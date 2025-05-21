@@ -103,6 +103,10 @@ class Serving(object):
             }   
             for ele in dataset
         ]
+
+        if not os.path.isdir(self.result_dir):
+            os.mkdir(self.result_dir)
+
         with open(os.path.join(self.result_dir,"prediction_results.json"),'w') as fp:
             json.dump(save_dict, fp, indent= 4)
 
