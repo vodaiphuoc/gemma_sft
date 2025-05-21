@@ -73,7 +73,7 @@ class Serving(object):
                     **self._generation_config
                 )
             return {
-                "answer": self.tokenizer.batch_decode(outputs, skip_special_tokens)
+                "answer": self.tokenizer.batch_decode(outputs, skip_special_tokens = True)
             }
 
         dataset = dataset.map(
