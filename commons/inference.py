@@ -12,7 +12,7 @@ class Serving(object):
     _generation_config = {
         "max_new_tokens": 128,
         "do_sample": True,
-        "num_beams": 2,
+        # "num_beams": 2,
         "temperature": 0.1,
         "length_penalty": -0.2
     }
@@ -77,7 +77,7 @@ class Serving(object):
 
         dataset = dataset.map(
             lambda x: _infer(x), 
-            batch_size = 2, 
+            batch_size = 4, 
             batched = True,
             desc="generating answers"
         )
