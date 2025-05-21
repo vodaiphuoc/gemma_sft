@@ -47,6 +47,7 @@ class Serving(object):
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
+
         return dataset.map(
             lambda x: {
                 "input_prompt":self.tokenizer.apply_chat_template(
@@ -54,8 +55,7 @@ class Serving(object):
                     tokenize = False,
                     add_generation_prompt= True
                 )
-            },
-            batched = True
+            }
         )
 
     def inference(self, dataset: Dataset):
