@@ -217,8 +217,6 @@ final label: {decoded_labels[6]}
     gc.collect()
     torch.cuda.empty_cache()
     
-    current_time = "2025-05-20_22-42-32"
-    current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
     if trainer.accelerator.is_main_process:
         s = Serving(
             device = trainer.accelerator.device,

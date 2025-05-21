@@ -7,6 +7,7 @@ import torch
 from torchmetrics.functional.text import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
 import os 
+import json
 
 class Serving(object):
     _generation_config = {
@@ -57,7 +58,8 @@ class Serving(object):
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
         dataset = dataset.select(list(range(12)))
         return dataset.map(
-            lambda x: self._tokenize(x)
+            lambda x: self._tokenize(x),
+            keep_in_memory = True,
         )
 
     def inference(self, dataset: Dataset):
@@ -82,7 +84,7 @@ class Serving(object):
                 )
             
             return {
-                "answer": self.tokenizer.batch_decode(outputs[:, inputs['input_ids'].shape[1]:], skip_special_tokens = True)
+                "model_response": self.tokenizer.batch_decode(outputs[:, inputs['input_ids'].shape[1]:], skip_special_tokens = True)
             }
 
         dataset = dataset.map(
@@ -92,10 +94,20 @@ class Serving(object):
             desc="generating answers"
         )
         # save results
-        dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
+        save_dict = [
+            {
+                "original_prompt": ele['prompt'],
+                "input_prompt": ele['input_prompt'],
+                "desired_completion": ele['desired_completion'],
+                "model_response": ele['model_response'],
+            }   
+            for ele in dataset
+        ]
+        with open(os.path.join(self.result_dir,"prediction_results.json"),'w') as fp:
+            json.dump(save_dict, fp, indent= 4)
 
-        bleu_value = bleu_score(preds=dataset['answer'], target=dataset['desired_completion'])
-        rouge_value = rouge_score(preds=dataset['answer'], target=dataset['desired_completion'])
+        bleu_value = bleu_score(preds=dataset['model_response'], target=dataset['desired_completion'])
+        rouge_value = rouge_score(preds=dataset['model_response'], target=dataset['desired_completion'])
 
         # get mean metrics
         report_metrics = {
