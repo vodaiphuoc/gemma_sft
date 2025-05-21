@@ -61,8 +61,8 @@ class Serving(object):
     def inference(self, dataset: Dataset):
         dataset = self._prepare_dataset(dataset)
         print('done init test dataset')
+
         def _infer(row):
-            print('batch prompt: ', len(row['input_prompt']))
             inputs = self.tokenizer(
                 row['input_prompt'],
                 add_special_tokens = False,
@@ -92,6 +92,7 @@ class Serving(object):
         # save results
         dataset.to_json(os.path.join(self.result_dir,"prediction_results.json"))
 
+        print(dataset['answer'])
         bleu_value = bleu_score(preds=dataset['answer'], target=dataset['completion'])
         rouge_value = rouge_score(preds=dataset['answer'], target=dataset['completion'])
 
