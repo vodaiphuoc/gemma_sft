@@ -12,7 +12,7 @@ class Serving(object):
     _generation_config = {
         "max_new_tokens": 128,
         "do_sample": True,
-        # "num_beams": 2,
+        "num_beams": 2,
         "temperature": 0.1,
         "length_penalty": -0.2
     }
@@ -46,6 +46,7 @@ class Serving(object):
         self.max_length = max_length
 
     def _prepare_dataset(self, dataset: Dataset)->Dataset:
+        dataset = dataset.select(list(range(12)))
         return dataset.map(
             apply_chat_template,
             fn_kwargs={"tokenizer": self.tokenizer}
@@ -77,7 +78,7 @@ class Serving(object):
 
         dataset = dataset.map(
             lambda x: _infer(x), 
-            batch_size = 4, 
+            batch_size = 6, 
             batched = True,
             desc="generating answers"
         )
