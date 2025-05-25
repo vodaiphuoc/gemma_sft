@@ -6,8 +6,11 @@ from typing import Optional
 
 from transformers import (
     GenerationMixin,
-    PreTrainedModel
+    PreTrainedModel,
+    AutoModelForCausalLM
 )
+
+from transformers.models.gemma3.modeling_gemma3 import Gemma3TextScaledWordEmbedding
 from transformers.configuration_utils import PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
@@ -48,7 +51,7 @@ class LSTMTextModel(nn.Module):
     def __init__(self, config: LSTMConfig):
         super().__init__()
         
-        self.embedding = nn.Embedding(
+        self.embedding = Gemma3TextScaledWordEmbedding(
             num_embeddings = config.vocab_size, 
             embedding_dim = config.embedding_dim,
             padding_idx= config.pad_token_id
@@ -105,8 +108,13 @@ class CustomLSTMForCausalLM(PreTrainedModel):
             module.weight.data.normal_(mean=0.0, std=std)
             if module.bias is not None:
                 module.bias.data.zero_()
-        elif isinstance(module, nn.Embedding):
-            module.weight.data.normal_(mean=0.0, std=std)
+        elif isinstance(module, Gemma3TextScaledWordEmbedding):
+            module.weight = AutoModelForCausalLM.from_pretrained(
+                "google/gemma-3-1b-it",
+                attn_implementation='eager',
+                torch_dtype=torch.float32,
+            ).get_input_embeddings.weight
+
             if module.padding_idx is not None:
                 module.weight.data[module.padding_idx].zero_()
         

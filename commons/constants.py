@@ -6,6 +6,24 @@ MODEL_KEY2IDS = {
     "lstm": "google/gemma-3-1b-it"
 }
 
+LR_KEY2IDS = {
+    "bart": {
+        "init_lr": 1e-5,
+        "min_lr": 1e-9,
+        "num_cycles": 0.5
+    },
+    "gemma": {
+        "init_lr": 1e-5,
+        "min_lr": 1e-9,
+        "num_cycles": 0.5
+    },
+    "lstm": {
+        "init_lr": 1e-3,
+        "min_lr": 1e-5,
+        "num_cycles": 0.5
+    }
+}
+
 LORA_PARAMS1 = {
     "r":8,
     "lora_alpha": 512,
@@ -25,15 +43,6 @@ LORA_PARAMS2 = {
     "task_type": "CAUSAL_LM"
 }
 
-
-BART_LORA_PARAMS = {
-    "r":8,
-    "lora_alpha": 32,
-    "lora_dropout": 0.05,
-    "bias":"none",
-    "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj", "embed_tokens", "embed_positions"],
-    "task_type": "CAUSAL_LM"
-}
 
 DISTRIBUTION_DEVICE = Literal["No","cuda","tpu"]
 DISTRIBUTION_TYPE = Literal["fsdp","ddp"]

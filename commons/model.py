@@ -5,8 +5,7 @@ from .constants import (
     DISTRIBUTION_DEVICE,
     MODEL_KEY2IDS, 
     LORA_PARAMS1,
-    LORA_PARAMS2,
-    BART_LORA_PARAMS
+    LORA_PARAMS2
 )
 
 from peft import LoraConfig

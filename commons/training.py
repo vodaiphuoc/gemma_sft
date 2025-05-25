@@ -5,6 +5,7 @@ from .dataset import get_datasets
 from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
+    LR_KEY2IDS
 )
 
 from .inference import Serving
@@ -30,7 +31,6 @@ def training_process(
         num_train_epochs:int = 4,
         train_batch_size:int = 8,
         eval_batch_size:int = 8,
-        learning_rate: float = 2e-4,
         fsdp_config = None,
     ):
 
@@ -166,7 +166,6 @@ final label: {decoded_labels[6]}
             dataloader_num_workers = 2,
             dataloader_prefetch_factor = dataloader_prefetch_factor,
             gradient_accumulation_steps = gradient_accumulation_steps,
-            learning_rate=learning_rate,
             fp16=True,
             fp16_full_eval = True,
             max_length = max_length,
@@ -175,9 +174,13 @@ final label: {decoded_labels[6]}
             eval_packing = False,
             jit_mode_eval = False,
             max_seq_length = None,
+            learning_rate=LR_KEY2IDS[model_key]["init_lr"],
             lr_scheduler_type = 'cosine_with_min_lr',
             warmup_steps= 10,
-            lr_scheduler_kwargs = {"min_lr": 1e-9, "num_cycles": 0.5},
+            lr_scheduler_kwargs = {
+                "min_lr": LR_KEY2IDS[model_key]["min_lr"], 
+                "num_cycles": LR_KEY2IDS[model_key]["num_cycles"]
+            },
             optim = 'adamw_torch_fused',
             weight_decay = 0.005,
             label_names=["labels"],
