@@ -106,7 +106,7 @@ def get_model_tokenizer(
         lora_config = LoraConfig(
             **BART_LORA_PARAMS
         )
-        return model, tokenizer, lora_config
+        return model, tokenizer, None
         
     else:
         raise NotImplemented(f"Only support key in: {list(MODEL_KEY2IDS.keys())}")
