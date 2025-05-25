@@ -37,6 +37,9 @@ class Serving(object):
         )
         base_model = base_model.to(torch.float16)
         merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+
+        print('model after merge: ', merged_model)
+
         self.model = torch.compile(
             merged_model, 
             mode=torch_compile_config['torch_compile_mode'],
@@ -76,7 +79,7 @@ class Serving(object):
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.model.device)
-            
+            print('input ids length: ', inputs['input_ids'].shape)
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
