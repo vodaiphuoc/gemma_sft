@@ -30,7 +30,7 @@ BART_LORA_PARAMS = {
     "lora_alpha": 32,
     "lora_dropout": 0.05,
     "bias":"none",
-    "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj","embed_tokens"],
+    "target_modules": ["q_proj", "o_proj", "k_proj", "v_proj"],
     "task_type": "CAUSAL_LM"
 }
 
