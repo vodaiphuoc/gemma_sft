@@ -55,11 +55,11 @@ class Serving(object):
             distribution_type = distribution_type,
             checkpoint_dir = checkpoint_dir
             )
-            precompile_model = precompile_model.to(torch.float16)
+            precompile_model = precompile_model.to(torch.float16).to(device)
             precompile_model.eval()
             print('precompile_model: ', type(precompile_model))
 
-            self.model = torch.compile(
+            self.model.forward = torch.compile(
                 precompile_model.forward, 
                 mode=torch_compile_config['torch_compile_mode'],
                 backend=torch_compile_config['torch_compile_backend']
@@ -67,6 +67,7 @@ class Serving(object):
 
         self.result_dir = result_dir
         self.max_length = max_length
+        self.device = device
         print('done init')
 
     def _tokenize(self, row):
@@ -96,7 +97,7 @@ class Serving(object):
                 max_length= self.max_length - self._generation_config['max_new_tokens'],
                 padding_side = 'left',
                 return_tensors = 'pt'
-            ).to(self.model.device)
+            ).to(self.device)
             print('input ids length: ', inputs['input_ids'].shape)
             with torch.inference_mode():
                 outputs = self.model.generate(
