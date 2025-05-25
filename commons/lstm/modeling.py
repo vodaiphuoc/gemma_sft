@@ -50,7 +50,8 @@ class LSTMTextModel(nn.Module):
         
         self.embedding = nn.Embedding(
             num_embeddings = config.vocab_size, 
-            embedding_dim = config.embedding_dim
+            embedding_dim = config.embedding_dim,
+            padding_idx= config.pad_token_id
         )
         self.lstm = nn.LSTM(
             input_size = config.embedding_dim, 
