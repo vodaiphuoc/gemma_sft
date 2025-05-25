@@ -113,7 +113,7 @@ class CustomLSTMForCausalLM(PreTrainedModel):
                 "google/gemma-3-1b-it",
                 attn_implementation='eager',
                 torch_dtype=torch.float32,
-            ).get_input_embeddings.weight
+            ).get_input_embeddings().weight
 
             if module.padding_idx is not None:
                 module.weight.data[module.padding_idx].zero_()
