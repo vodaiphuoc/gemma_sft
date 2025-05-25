@@ -52,7 +52,7 @@ def training_process(
             "torch_compile_backend": "inductor",
             "torch_compile_mode": "default"
         }
-        max_length = 2176 # if model_key == "gemma" else 512
+        max_length = 2176 if model_key == "gemma" else 2048
         dataloader_prefetch_factor = 2
         gradient_accumulation_steps = 8
 
