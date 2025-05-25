@@ -203,11 +203,7 @@ final label: {decoded_labels[6]}
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
-
-    if trainer.accelerator.is_main_process:
-        print(f'saving, check model type {type(trainer.model)}, wrapped model type: {type(trainer.model_wrapped)}')
-        merged_model = trainer.model.merge_and_unload() 
-        merged_model.save_pretrained(current_ckpt_dir)
+    trainer.save_model(current_ckpt_dir)
 
     # cleanup
     from accelerate.utils import release_memory
