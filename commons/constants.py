@@ -25,7 +25,7 @@ LORA_PARAMS2 = {
 }
 
 
-BERT_LORA_PARAMS = {
+BART_LORA_PARAMS = {
     "r":8,
     "lora_alpha": 32,
     "lora_dropout": 0.05,
