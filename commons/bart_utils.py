@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from transformers.models.bart.modeling_bart import BartLearnedPositionalEmbedding
 
 class GemmaLikeSpecialTokens:
 
@@ -39,7 +40,7 @@ def extend_position_embedding(model, new_context_length:int = 2048):
     print(f"Embedding dimension: {embedding_dim}")
 
     old_decoder_pos_embedding = model.model.decoder.embed_positions
-    new_decoder_pos_embedding = nn.Embedding(new_context_length, embedding_dim)
+    new_decoder_pos_embedding = BartLearnedPositionalEmbedding(new_context_length, embedding_dim)
 
     print(f"Created new positional embedding layers with size ({new_context_length}, {embedding_dim}).")
 
