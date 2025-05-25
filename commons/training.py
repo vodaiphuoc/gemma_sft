@@ -202,14 +202,7 @@ final label: {decoded_labels[6]}
     print('done training, saving model')
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    current_adapter_dir = os.path.join(checkpoint_save_dir, current_time, "adapter")
-    current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time, "ckpt")
-    trainer.save_model(current_adapter_dir)
-
-    if trainer.accelerator.is_main_process:
-        print('saving base model')
-        print('base model type: ', type(trainer.model.base_model))
-        trainer.model.base_model.save_pretrained(current_ckpt_dir)
+    current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
 
     # cleanup
     from accelerate.utils import release_memory
@@ -230,9 +223,9 @@ final label: {decoded_labels[6]}
             distribution_device = distribution_device,
             distribution_type = distribution_type,
             max_length = max_length,
-            adapter_dir = current_adapter_dir,
             checkpoint_dir = current_ckpt_dir,
             result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time),
-            torch_compile_config = torch_compile_config
+            torch_compile_config = torch_compile_config,
+            lora_config = lora_config
         )
         s.inference(converted_testdata)

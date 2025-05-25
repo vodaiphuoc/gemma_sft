@@ -25,26 +25,33 @@ class Serving(object):
             distribution_device: DISTRIBUTION_DEVICE,
             distribution_type: DISTRIBUTION_TYPE,
             max_length:int,
-            adapter_dir: str,
             checkpoint_dir:str,
             result_dir: str,
-            torch_compile_config: dict
+            torch_compile_config: dict,
+            lora_config: dict
             ):
         print("Serving init on device: ", device)
-        base_model, self.tokenizer, _ = get_model_tokenizer(
+        
+        if lora_config is not None:
+            base_model, self.tokenizer, _ = get_model_tokenizer(
+                model_key= model_key, 
+                distribution_device= distribution_device, 
+                distribution_type = distribution_type
+            )
+            base_model = base_model.to(torch.float16)
+            precompile_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+        else:
+            precompile_model, self.tokenizer, _ = get_model_tokenizer(
             model_key= model_key, 
-            distribution_device= distribution_device, 
+            distribution_device = distribution_device, 
             distribution_type = distribution_type,
-            checkpoint_dir= checkpoint_dir
-        )
-        print('inference loaded model type: ', type(base_model))
-        base_model = base_model.to(torch.float16)
-        merged_model = PeftModel.from_pretrained(base_model, adapter_dir).to(device)
-
-        # print('model after merge: ', merged_model)
+            checkpoint_dir = checkpoint_dir
+            )
+            precompile_model = precompile_model.to(torch.float16)
+        print('precompile_model: ', type(precompile_model))
 
         self.model = torch.compile(
-            merged_model, 
+            precompile_model, 
             mode=torch_compile_config['torch_compile_mode'],
             backend=torch_compile_config['torch_compile_backend']
         )
