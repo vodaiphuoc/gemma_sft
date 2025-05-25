@@ -1,4 +1,4 @@
-from .bart_utils import adjust_tokenizer
+from .bart_utils import adjust_tokenizer, extend_position_embedding
 from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
@@ -89,6 +89,7 @@ def get_model_tokenizer(
             torch_dtype=torch.float32
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
+        model = extend_position_embedding(model, new_context_length= 2048)
         lora_config = LoraConfig(
             **BART_LORA_PARAMS
         )
