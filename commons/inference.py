@@ -55,12 +55,12 @@ class Serving(object):
             distribution_type = distribution_type,
             checkpoint_dir = checkpoint_dir
             )
-            precompile_model = precompile_model.to(torch.float16).to(device)
-            precompile_model.eval()
-            print('precompile_model: ', type(precompile_model))
+            self.model = precompile_model.to(torch.float16).to(device)
+            self.model.eval()
+            print('precompile_model: ', type(self.model))
 
             self.model.forward = torch.compile(
-                precompile_model.forward, 
+                self.model.forward, 
                 mode=torch_compile_config['torch_compile_mode'],
                 backend=torch_compile_config['torch_compile_backend']
             )
