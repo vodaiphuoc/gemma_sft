@@ -107,13 +107,13 @@ class LSTMTextModel(nn.Module):
         B = input_ids.shape[0]
         embeds = self.embedding(input_ids)
         
-        hn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size)) if \
+        hn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size), dtype= embeds.dtype) if \
             self.config.bidirectional else \
-            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size))
+            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype)
         
-        cn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size)) if \
+        cn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype) if \
             self.config.bidirectional else \
-            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size))
+            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype)
         
         for block in self.lstm_blocks:
             embeds, (hn, cn) = block(
