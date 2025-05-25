@@ -40,6 +40,13 @@ class Serving(object):
             )
             base_model = base_model.to(torch.float16)
             precompile_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+
+            self.model = torch.compile(
+                precompile_model, 
+                mode=torch_compile_config['torch_compile_mode'],
+                backend=torch_compile_config['torch_compile_backend']
+            )
+
         else:
             precompile_model, self.tokenizer, _ = get_model_tokenizer(
             model_key= model_key, 
@@ -48,13 +55,14 @@ class Serving(object):
             checkpoint_dir = checkpoint_dir
             )
             precompile_model = precompile_model.to(torch.float16)
-        print('precompile_model: ', type(precompile_model))
+            print('precompile_model: ', type(precompile_model))
 
-        self.model = torch.compile(
-            precompile_model, 
-            mode=torch_compile_config['torch_compile_mode'],
-            backend=torch_compile_config['torch_compile_backend']
-        )
+            self.model = torch.compile(
+                precompile_model.forward, 
+                mode=torch_compile_config['torch_compile_mode'],
+                backend=torch_compile_config['torch_compile_backend']
+            )
+        
         self.model.eval()
 
         self.result_dir = result_dir
