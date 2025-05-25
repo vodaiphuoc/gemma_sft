@@ -1,3 +1,4 @@
+from .lstm.modeling import LSTMConfig, CustomLSTMForCausalLM
 from .bart_utils import adjust_tokenizer, extend_position_embedding
 from .constants import (
     DISTRIBUTION_TYPE, 
@@ -102,11 +103,12 @@ def get_model_tokenizer(
             model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
 
         model, tokenizer = adjust_tokenizer(model, tokenizer)
-        
-        lora_config = LoraConfig(
-            **BART_LORA_PARAMS
-        )
         return model, tokenizer, None
-        
+    
+    elif model_key == "lstm":
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
+        model = CustomLSTMForCausalLM(config = LSTMConfig())
+        return model, tokenizer, None
+    
     else:
         raise NotImplemented(f"Only support key in: {list(MODEL_KEY2IDS.keys())}")
