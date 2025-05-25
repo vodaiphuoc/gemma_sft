@@ -203,6 +203,7 @@ final label: {decoded_labels[6]}
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
+    trainer.save_model(current_ckpt_dir)
 
     # cleanup
     from accelerate.utils import release_memory
