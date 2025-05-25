@@ -207,6 +207,8 @@ final label: {decoded_labels[6]}
     trainer.save_model(current_adapter_dir)
 
     if trainer.accelerator.is_main_process:
+        print('saving base model')
+        print('base model type: ', type(trainer.model.base_model))
         trainer.model.base_model.save_pretrained(current_ckpt_dir)
 
     # cleanup
