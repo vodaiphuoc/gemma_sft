@@ -25,6 +25,7 @@ class Serving(object):
             distribution_device: DISTRIBUTION_DEVICE,
             distribution_type: DISTRIBUTION_TYPE,
             max_length:int,
+            adapter_dir: str,
             checkpoint_dir:str,
             result_dir: str,
             torch_compile_config: dict
@@ -33,11 +34,12 @@ class Serving(object):
         base_model, self.tokenizer, _ = get_model_tokenizer(
             model_key= model_key, 
             distribution_device= distribution_device, 
-            distribution_type = distribution_type
+            distribution_type = distribution_type,
+            checkpoint_dir= checkpoint_dir
         )
         print('inference loaded model type: ', type(base_model))
         base_model = base_model.to(torch.float16)
-        merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+        merged_model = PeftModel.from_pretrained(base_model, adapter_dir).to(device)
 
         # print('model after merge: ', merged_model)
 
