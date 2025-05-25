@@ -33,15 +33,16 @@ class Serving(object):
         base_model, self.tokenizer, _ = get_model_tokenizer(
             model_key= model_key, 
             distribution_device= distribution_device, 
-            distribution_type = distribution_type
+            distribution_type = distribution_type,
+            checkpoint_dir= checkpoint_dir
         )
         base_model = base_model.to(torch.float16)
-        merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
+        # merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
 
-        print('model after merge: ', merged_model)
+        # print('model after merge: ', merged_model)
 
         self.model = torch.compile(
-            merged_model, 
+            base_model, 
             mode=torch_compile_config['torch_compile_mode'],
             backend=torch_compile_config['torch_compile_backend']
         )

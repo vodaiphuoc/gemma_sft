@@ -66,16 +66,22 @@ def _get_pretrained_model(
 def get_model_tokenizer(
         model_key:str = "gemma",
         distribution_device: DISTRIBUTION_DEVICE = "cuda",
-        distribution_type: DISTRIBUTION_TYPE = "ddp"
+        distribution_type: DISTRIBUTION_TYPE = "ddp",
+        checkpoint_dir: str = None
     )->Tuple[PreTrainedModel, PreTrainedTokenizer,Union[LoraConfig, NoneType]]:
     
     if model_key == "gemma":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
-        model = _get_pretrained_model(
-            model_id= MODEL_KEY2IDS[model_key],
-            distribution_device = distribution_device,
-            distribution_type = distribution_type
-        )
+
+        if checkpoint_dir is None:
+            model = _get_pretrained_model(
+                model_id= MODEL_KEY2IDS[model_key],
+                distribution_device = distribution_device,
+                distribution_type = distribution_type
+            )
+        else:
+            model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
+
         lora_config = LoraConfig(
             **LORA_PARAMS1
         )
@@ -83,13 +89,20 @@ def get_model_tokenizer(
 
     elif model_key == "bart":
         tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
-        model = AutoModelForCausalLM.from_pretrained(
-            MODEL_KEY2IDS[model_key],
-            attn_implementation='eager',
-            torch_dtype=torch.float32
-        )
+
+        if checkpoint_dir is None:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_KEY2IDS[model_key],
+                attn_implementation='eager',
+                torch_dtype=torch.float32
+            )
+            model = extend_position_embedding(model, new_context_length= 2048)
+            
+        else:
+            model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
+
         model, tokenizer = adjust_tokenizer(model, tokenizer)
-        model = extend_position_embedding(model, new_context_length= 2048)
+        
         lora_config = LoraConfig(
             **BART_LORA_PARAMS
         )
