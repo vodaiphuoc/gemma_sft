@@ -29,25 +29,19 @@ def adjust_tokenizer(model, tokenizer):
     return model, tokenizer
 
 def extend_position_embedding(model, new_context_length:int = 2048):
+    print('input model type: ',type(model))
+    print('input model.model type: ',type(model.model))
+
     original_context_length = model.config.max_position_embeddings
     embedding_dim = model.config.d_model
 
     print(f"Original context length: {original_context_length}")
     print(f"Embedding dimension: {embedding_dim}")
 
-    old_encoder_pos_embedding = model.model.encoder.embed_positions
     old_decoder_pos_embedding = model.model.decoder.embed_positions
-
-    new_encoder_pos_embedding = nn.Embedding(new_context_length, embedding_dim)
     new_decoder_pos_embedding = nn.Embedding(new_context_length, embedding_dim)
 
     print(f"Created new positional embedding layers with size ({new_context_length}, {embedding_dim}).")
-
-    # Copy for encoder
-    with torch.no_grad():
-        # Copy existing weights for positions 0 to original_context_length - 1
-        new_encoder_pos_embedding.weight[:original_context_length, :] = old_encoder_pos_embedding.weight[:original_context_length, :]
-        print(f"Copied {original_context_length} weights from old encoder PE to new encoder PE.")
 
     # Copy for decoder
     with torch.no_grad():
@@ -56,14 +50,12 @@ def extend_position_embedding(model, new_context_length:int = 2048):
         print(f"Copied {original_context_length} weights from old decoder PE to new decoder PE.")
 
     # 5. Assign the new embedding layers back to the model
-    model.model.encoder.embed_positions = new_encoder_pos_embedding
     model.model.decoder.embed_positions = new_decoder_pos_embedding
 
     # Update the model's configuration to reflect the new max position embeddings
     model.config.max_position_embeddings = new_context_length
     print(f"Model's max_position_embeddings updated to {model.config.max_position_embeddings}.")
 
-    model.model.encoder.embed_positions.weight.requires_grad = True
     model.model.decoder.embed_positions.weight.requires_grad = True
 
     return model
