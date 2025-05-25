@@ -43,8 +43,8 @@ case "$1" in
                     --distribution_device cuda \
                     --distribution_type ddp \
                     --model_key bart \
-                    --train_batch_size 8 \
-                    --eval_batch_size 8
+                    --train_batch_size 4 \
+                    --eval_batch_size 4
                 
             else
                 echo only support distribution type "fsdp" or "ddp"
