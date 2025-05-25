@@ -12,9 +12,7 @@ from .inference import Serving
 
 from .mock import MockSFTTrainer, MockSFTTrainerV2
 from .utils import LearningRateLogger
-from transformers import (
-    PrinterCallback
-)
+from transformers.trainer_callback import PrinterCallback
 
 import gc
 import torch
@@ -147,7 +145,7 @@ final label: {decoded_labels[6]}
         eval_dataset = converted_validdata,
         compute_metrics = compute_metrics,
         preprocess_logits_for_metrics = preprocess_logits_for_metrics,
-        callbacks = [LearningRateLogger()],
+        callbacks = [LearningRateLogger],
         args = SFTConfig(
             do_train = True,
             do_eval = False,

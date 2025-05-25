@@ -14,6 +14,7 @@ from transformers.models.gemma3.modeling_gemma3 import Gemma3TextScaledWordEmbed
 from transformers.configuration_utils import PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
+from typing import Tuple
 
 class LSTMConfig(PretrainedConfig):
     model_type = "CustomLSTM"
@@ -25,12 +26,14 @@ class LSTMConfig(PretrainedConfig):
             tie_word_embeddings:bool = True,
             initializer_range:float = 0.02,
             sequence_length: int = 2048,
-            vocab_size: int = 262208,
+            vocab_size: int = 262144,
             embedding_dim: int = 1152,
             hidden_size: int = 512,
-            num_lstm_layer: int = 4,
+            num_lstm_layer: int = 8,
+            bidirectional:bool = False,
             dropout: float = 0.1,
-            bias: bool = True
+            bias: bool = True,
+            num_lsmt_block: int = 6
         )->None:
         super().__init__(
             pad_token_id=pad_token_id,
@@ -44,8 +47,36 @@ class LSTMConfig(PretrainedConfig):
         self.embedding_dim = embedding_dim
         self.hidden_size = hidden_size
         self.num_lstm_layer = num_lstm_layer
+        self.bidirectional = bidirectional
         self.dropout = dropout
         self.bias = bias
+        self.num_lsmt_block = num_lsmt_block
+
+class LSTMBlock(nn.Module):
+    def __init__(self, config: LSTMConfig):
+        super().__init__()
+        self.lstm = nn.LSTM(
+            input_size = config.embedding_dim, 
+            hidden_size = config.hidden_size, 
+            num_layers = config.num_lstm_layer,
+            bias = True,
+            batch_first = True,
+            bidirectional = False,
+            proj_size = config.hidden_size
+            )
+
+    def forward(
+            self, 
+            embeds: torch.Tensor, 
+            previous_block_hn: torch.Tensor = None, 
+            previous_block_cn: torch.Tensor = None
+        )->Tuple[torch.Tensor, Tuple[torch.Tensor]]:
+        # output lstm shape: (N, L, config.hidden_size)
+        if previous_block_hn is None and previous_block_cn is None:
+            output, (hn, cn) = self.lstm(embeds)
+        else:    
+            output, (hn, cn) = self.lstm(embeds, (previous_block_hn, previous_block_cn))
+        return output, (hn, cn)
 
 class LSTMTextModel(nn.Module):
     def __init__(self, config: LSTMConfig):
@@ -56,17 +87,12 @@ class LSTMTextModel(nn.Module):
             embedding_dim = config.embedding_dim,
             padding_idx= config.pad_token_id
         )
-        self.lstm = nn.LSTM(
-            input_size = config.embedding_dim, 
-            hidden_size = config.hidden_size, 
-            num_layers = config.num_lstm_layer,
-            bias = True,
-            batch_first = True,
-            bidirectional = False,
-            proj_size = 0
-            )
+        self.lstm_blocks = nn.ModuleList(
+            [LSTMBlock(config) for _ in range(config.num_lsmt_block)]
+        )
         self.fc = nn.Linear(config.hidden_size, config.vocab_size)
         self.dropout = nn.Dropout(config.dropout)
+        self.config = config
 
     def forward(
             self, 
@@ -78,26 +104,28 @@ class LSTMTextModel(nn.Module):
         Returns:
             torch.Tensor shape (N, L, config.vocab_size)
         """
+        B = input_ids.shape[0]
         embeds = self.embedding(input_ids)
         
-        # output lstm shape: (N, L, config.hidden_size)
-        output, _ = self.lstm(embeds)
-
-        output = self.dropout(output)
+        hn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size)) if \
+            self.config.bidirectional else \
+            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size))
+        
+        cn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size)) if \
+            self.config.bidirectional else \
+            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size))
+        
+        for block in self.lstm_blocks:
+            embeds, (hn, cn) = block(
+                embeds = embeds,
+                previous_block_hn = hn, 
+                previous_block_cn = cn
+            )
+        
+        output = self.dropout(embeds)
         return self.fc(output)
-
-    # def generate(self, idx, max_new_tokens):
-    #     for _ in range(max_new_tokens):
-    #         idx_cond = idx[:, -config['block_size']:]
-    #         embeds = self.embedding(idx_cond)
-    #         output, _ = self.rnn(embeds)
-    #         logits = self.fc(output[:, -1, :])
-    #         probs = F.softmax(logits, dim=-1)
-    #         idx_next = torch.multinomial(probs, num_samples=1)
-    #         idx = torch.cat((idx, idx_next), dim=1)
-    #     return idx
     
-class CustomLSTMForCausalLM(PreTrainedModel):
+class CustomLSTMForCausalLM(PreTrainedModel, GenerationMixin):
     config_class = LSTMConfig
 
     def _init_weights(self, module):
@@ -114,9 +142,6 @@ class CustomLSTMForCausalLM(PreTrainedModel):
                 attn_implementation='eager',
                 torch_dtype=torch.float32,
             ).get_input_embeddings().weight
-
-            if module.padding_idx is not None:
-                module.weight.data[module.padding_idx].zero_()
         
     def __init__(self, config: LSTMConfig):
         super().__init__(config)
