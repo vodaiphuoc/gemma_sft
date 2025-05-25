@@ -26,7 +26,7 @@ class LSTMConfig(PretrainedConfig):
             initializer_range:float = 0.02,
             sequence_length: int = 2048,
             vocab_size: int = 262208,
-            embedding_dim: int = 512,
+            embedding_dim: int = 1152,
             hidden_size: int = 512,
             num_lstm_layer: int = 4,
             dropout: float = 0.1,
