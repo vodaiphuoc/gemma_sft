@@ -1,7 +1,7 @@
 from typing import Literal
 
 MODEL_KEY2IDS = {
-    "bert": "google-bert/bert-base-uncased",
+    "bart": "facebook/bart-large",
     "gemma": "google/gemma-3-1b-it"
 }
 
