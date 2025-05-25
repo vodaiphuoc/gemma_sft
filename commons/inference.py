@@ -36,6 +36,7 @@ class Serving(object):
             distribution_type = distribution_type,
             checkpoint_dir= checkpoint_dir
         )
+        print('inference loaded model type: ', type(base_model))
         base_model = base_model.to(torch.float16)
         # merged_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
 
@@ -76,7 +77,7 @@ class Serving(object):
                 add_special_tokens = False,
                 padding = "max_length",
                 truncation= True,
-                max_length= self.max_length,
+                max_length= self.max_length - self._generation_config['max_new_tokens'],
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.model.device)
