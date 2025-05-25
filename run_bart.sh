@@ -31,7 +31,7 @@ case "$1" in
                     train.py \
                     --distribution_device cuda \
                     --distribution_type fsdp \
-                    --model_key bert \
+                    --model_key bart \
                     --train_batch_size 16 \
                     --eval_batch_size 16
 
@@ -42,7 +42,7 @@ case "$1" in
                     train.py \
                     --distribution_device cuda \
                     --distribution_type ddp \
-                    --model_key bert \
+                    --model_key bart \
                     --train_batch_size 8 \
                     --eval_batch_size 8
                 
