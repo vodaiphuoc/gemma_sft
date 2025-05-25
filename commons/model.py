@@ -1,11 +1,11 @@
-from .special_tokens import adjust_tokenizer
+from .bart_utils import adjust_tokenizer
 from .constants import (
     DISTRIBUTION_TYPE, 
     DISTRIBUTION_DEVICE,
     MODEL_KEY2IDS, 
     LORA_PARAMS1,
     LORA_PARAMS2,
-    BERT_LORA_PARAMS
+    BART_LORA_PARAMS
 )
 
 from peft import LoraConfig
@@ -81,7 +81,7 @@ def get_model_tokenizer(
         )
         return model, tokenizer, lora_config
 
-    elif model_key == "bert":
+    elif model_key == "bart":
         tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_KEY2IDS[model_key],
@@ -90,7 +90,7 @@ def get_model_tokenizer(
         )
         model, tokenizer = adjust_tokenizer(model, tokenizer)
         lora_config = LoraConfig(
-            **BERT_LORA_PARAMS
+            **BART_LORA_PARAMS
         )
         return model, tokenizer, lora_config
         
