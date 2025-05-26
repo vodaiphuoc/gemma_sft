@@ -29,11 +29,11 @@ class LSTMConfig(PretrainedConfig):
             vocab_size: int = 262144,
             embedding_dim: int = 1152,
             hidden_size: int = 256,
-            num_lstm_layer: int = 6,
+            num_lstm_layer: int = 4,
             bidirectional:bool = False,
             dropout: float = 0.1,
             bias: bool = True,
-            num_lsmt_block: int = 5
+            num_lsmt_block: int = 4
         )->None:
         super().__init__(
             pad_token_id=pad_token_id,
@@ -53,10 +53,10 @@ class LSTMConfig(PretrainedConfig):
         self.num_lsmt_block = num_lsmt_block
 
 class LSTMBlock(nn.Module):
-    def __init__(self, config: LSTMConfig):
+    def __init__(self, config: LSTMConfig, input_size:int):
         super().__init__()
         self.lstm = nn.LSTM(
-            input_size = config.embedding_dim, 
+            input_size = input_size, 
             hidden_size = config.hidden_size, 
             num_layers = config.num_lstm_layer,
             bias = True,
@@ -64,7 +64,7 @@ class LSTMBlock(nn.Module):
             bidirectional = False,
             )
         
-        self.project_back1 = nn.Linear(config.hidden_size, config.embedding_dim)
+        self.project_back1 = nn.Linear(config.hidden_size, input_size)
         
     def forward(
             self, 
@@ -88,8 +88,21 @@ class LSTMTextModel(nn.Module):
             embedding_dim = config.embedding_dim,
             padding_idx= config.pad_token_id
         )
+
+        delta_size = (config.embedding_dim - config.hidden_size)//(config.num_lsmt_block -1)
+        size_list = list(reversed([_i 
+         if _i + delta_size < config.embedding_dim
+         else config.embedding_dim
+         for _i in range(
+            config.hidden_size, 
+            config.embedding_dim, 
+            delta_size
+        )]
+        ))
+        assert len(size_list) == config.num_lsmt_block
+        
         self.lstm_blocks = nn.ModuleList(
-            [LSTMBlock(config) for _ in range(config.num_lsmt_block)]
+            [LSTMBlock(config, _input_size) for _input_size in size_list]
         )
         self.fc = nn.Linear(config.embedding_dim, config.vocab_size)
         self.dropout = nn.Dropout(config.dropout)
