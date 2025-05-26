@@ -65,9 +65,7 @@ class LSTMBlock(nn.Module):
             )
         
         self.project_back1 = nn.Linear(config.hidden_size, config.embedding_dim)
-        self.project_back2 = nn.Linear(config.hidden_size, config.embedding_dim)
-        self.project_back3 = nn.Linear(config.hidden_size, config.embedding_dim)
-
+        
     def forward(
             self, 
             embeds: torch.Tensor, 
@@ -79,7 +77,7 @@ class LSTMBlock(nn.Module):
             output, (hn, cn) = self.lstm(embeds)
         else:    
             output, (hn, cn) = self.lstm(embeds, (previous_block_hn, previous_block_cn))
-        return self.project_back1(output), (self.project_back2(hn), self.project_back3(cn))
+        return self.project_back1(output), (hn, cn)
 
 class LSTMTextModel(nn.Module):
     def __init__(self, config: LSTMConfig):
@@ -111,25 +109,25 @@ class LSTMTextModel(nn.Module):
         embeds = self.embedding(input_ids)
         
         hn = torch.zeros(
-            (2*self.config.num_lstm_layer, B, self.config.embedding_dim), 
+            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
             dtype= embeds.dtype,
             device= embeds.device
             ) if \
             self.config.bidirectional else \
             torch.zeros(
-                (1*self.config.num_lstm_layer, B, self.config.embedding_dim),
+                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
                 dtype= embeds.dtype,
                 device= embeds.device
                 )
         
         cn = torch.zeros(
-            (2*self.config.num_lstm_layer, B, self.config.embedding_dim), 
+            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
             dtype= embeds.dtype,
             device= embeds.device
             ) if \
             self.config.bidirectional else \
             torch.zeros(
-                (1*self.config.num_lstm_layer, B, self.config.embedding_dim),
+                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
                 dtype= embeds.dtype,
                 device= embeds.device
                 )
@@ -140,6 +138,9 @@ class LSTMTextModel(nn.Module):
                 previous_block_hn = hn, 
                 previous_block_cn = cn
             )
+            print('out embeds shape:', embeds.shape)
+            print('out hn shape:', hn.shape)
+            print('out cn shape:', cn.shape)
         
         output = self.dropout(embeds)
         return self.fc(output)
