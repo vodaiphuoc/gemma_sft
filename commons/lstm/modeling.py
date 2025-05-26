@@ -18,12 +18,12 @@ from typing import Tuple
 
 class LSTMConfig(PretrainedConfig):
     model_type = "CustomLSTM"
-    architectures = [
-        "CustomLSTMForCausalLM"
-    ]
     
     def __init__(
             self,
+            architectures = [
+                "CustomLSTMForCausalLM"
+            ],        
             pad_token_id:int = 0,
             eos_token_id:int = 1,
             bos_token_id:int = 2,
@@ -37,13 +37,16 @@ class LSTMConfig(PretrainedConfig):
             bidirectional:bool = False,
             dropout: float = 0.1,
             bias: bool = True,
-            num_lsmt_block: int = 4
+            num_lsmt_block: int = 4,
+            **kwargs
         )->None:
         super().__init__(
             pad_token_id=pad_token_id,
             bos_token_id=bos_token_id,
             eos_token_id=eos_token_id,
             tie_word_embeddings=tie_word_embeddings,
+            architectures = architectures,
+            **kwargs
         )
         self.initializer_range = initializer_range
         self.sequence_length = sequence_length
