@@ -10,6 +10,7 @@ from .constants import (
 
 from peft import LoraConfig
 from transformers import (
+    AutoConfig,
     AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedTokenizer,
@@ -109,6 +110,7 @@ def get_model_tokenizer(
         if checkpoint_dir is None:
             model = CustomLSTMForCausalLM(config = LSTMConfig())
         else:
+            AutoConfig.register("CustomLSTM", LSTMConfig)
             AutoModelForCausalLM.register(LSTMConfig, CustomLSTMForCausalLM)
             model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
         return model, tokenizer, None
