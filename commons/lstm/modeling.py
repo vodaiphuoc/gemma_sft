@@ -29,7 +29,7 @@ class LSTMConfig(PretrainedConfig):
             vocab_size: int = 262144,
             embedding_dim: int = 1152,
             hidden_size: int = 512,
-            num_lstm_layer: int = 8,
+            num_lstm_layer: int = 6,
             bidirectional:bool = False,
             dropout: float = 0.1,
             bias: bool = True,
@@ -111,25 +111,25 @@ class LSTMTextModel(nn.Module):
         embeds = self.embedding(input_ids)
         
         hn = torch.zeros(
-            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
+            (2*self.config.num_lstm_layer, B, self.config.embedding_dim), 
             dtype= embeds.dtype,
             device= embeds.device
             ) if \
             self.config.bidirectional else \
             torch.zeros(
-                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
+                (1*self.config.num_lstm_layer, B, self.config.embedding_dim),
                 dtype= embeds.dtype,
                 device= embeds.device
                 )
         
         cn = torch.zeros(
-            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
+            (2*self.config.num_lstm_layer, B, self.config.embedding_dim), 
             dtype= embeds.dtype,
             device= embeds.device
             ) if \
             self.config.bidirectional else \
             torch.zeros(
-                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
+                (1*self.config.num_lstm_layer, B, self.config.embedding_dim),
                 dtype= embeds.dtype,
                 device= embeds.device
                 )
