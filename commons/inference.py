@@ -99,6 +99,7 @@ class Serving(object):
                 return_tensors = 'pt'
             ).to(self.device)
             print('input ids length: ', inputs['input_ids'].shape)
+            print('inputs: ', inputs)
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
