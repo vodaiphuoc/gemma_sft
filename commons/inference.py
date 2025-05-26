@@ -98,8 +98,7 @@ class Serving(object):
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.device)
-            print('input ids length: ', inputs['input_ids'].shape)
-            print('inputs: ', inputs)
+            print('row[input_prompt]: ', row['input_prompt'])
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
