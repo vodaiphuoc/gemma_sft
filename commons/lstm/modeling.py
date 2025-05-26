@@ -110,13 +110,29 @@ class LSTMTextModel(nn.Module):
         B = input_ids.shape[0]
         embeds = self.embedding(input_ids)
         
-        hn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size), dtype= embeds.dtype) if \
+        hn = torch.zeros(
+            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
+            dtype= embeds.dtype,
+            device= embeds.device
+            ) if \
             self.config.bidirectional else \
-            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype)
+            torch.zeros(
+                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
+                dtype= embeds.dtype,
+                device= embeds.device
+                )
         
-        cn = torch.zeros((2*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype) if \
+        cn = torch.zeros(
+            (2*self.config.num_lstm_layer, B, self.config.hidden_size), 
+            dtype= embeds.dtype,
+            device= embeds.device
+            ) if \
             self.config.bidirectional else \
-            torch.zeros((1*self.config.num_lstm_layer, B, self.config.hidden_size),dtype= embeds.dtype)
+            torch.zeros(
+                (1*self.config.num_lstm_layer, B, self.config.hidden_size),
+                dtype= embeds.dtype,
+                device= embeds.device
+                )
         
         for block in self.lstm_blocks:
             embeds, (hn, cn) = block(
@@ -132,7 +148,6 @@ class CustomLSTMForCausalLM(PreTrainedModel, GenerationMixin):
     config_class = LSTMConfig
 
     def _init_weights(self, module):
-        print('call init weight', type(module))
         std = self.config.initializer_range
 
         if isinstance(module, (nn.Linear)):
