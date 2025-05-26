@@ -138,9 +138,6 @@ class LSTMTextModel(nn.Module):
                 previous_block_hn = hn, 
                 previous_block_cn = cn
             )
-            print('out embeds shape:', embeds.shape)
-            print('out hn shape:', hn.shape)
-            print('out cn shape:', cn.shape)
         
         output = self.dropout(embeds)
         return self.fc(output)
