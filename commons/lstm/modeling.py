@@ -194,7 +194,8 @@ class CustomLSTMForCausalLM(PreTrainedModel, GenerationMixin):
             self, 
             input_ids: Optional[torch.LongTensor] = None,
             attention_mask: Optional[torch.Tensor] = None, 
-            labels: Optional[torch.LongTensor] = None
+            labels: Optional[torch.LongTensor] = None,
+            **kwargs,
         )->CausalLMOutputWithPast:
         r"""
         Args:
@@ -202,6 +203,10 @@ class CustomLSTMForCausalLM(PreTrainedModel, GenerationMixin):
             labels (torch.LongTensor): shape (N, L)
         """
         logits = self.model(input_ids = input_ids)
-        loss = self.loss_function(logits, labels, self.config.vocab_size)
 
+        if labels is not None:
+            loss = self.loss_function(logits, labels, self.config.vocab_size)
+        else:
+            loss = None
+        
         return CausalLMOutputWithPast(loss = loss, logits= logits)
