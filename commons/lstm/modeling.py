@@ -91,7 +91,7 @@ class LSTMTextModel(nn.Module):
         self.lstm_blocks = nn.ModuleList(
             [LSTMBlock(config) for _ in range(config.num_lsmt_block)]
         )
-        self.fc = nn.Linear(config.hidden_size, config.vocab_size)
+        self.fc = nn.Linear(config.embedding_dim, config.vocab_size)
         self.dropout = nn.Dropout(config.dropout)
         self.config = config
 
