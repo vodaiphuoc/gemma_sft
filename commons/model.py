@@ -109,7 +109,7 @@ def get_model_tokenizer(
         if checkpoint_dir is None:
             model = CustomLSTMForCausalLM(config = LSTMConfig())
         else:
-            AutoModelForCausalLM.register(LSTMConfig.model_type, CustomLSTMForCausalLM)
+            AutoModelForCausalLM.register(LSTMConfig, CustomLSTMForCausalLM)
             model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
         return model, tokenizer, None
     
