@@ -28,7 +28,8 @@ class Serving(object):
             checkpoint_dir:str,
             result_dir: str,
             torch_compile_config: dict,
-            lora_config: dict
+            lora_config: dict,
+            inference_batch_size:int = 2
             ):
         print("Serving init on device: ", device)
         
@@ -68,6 +69,7 @@ class Serving(object):
         self.result_dir = result_dir
         self.max_length = max_length
         self.device = device
+        self.inference_batch_size = inference_batch_size
         print('done init')
 
     def _tokenize(self, row):
@@ -98,7 +100,7 @@ class Serving(object):
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.device)
-            print('row[input_prompt]: ', row['input_prompt'])
+            print('check input ids: ', inputs['input_ids'][0])
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
@@ -111,7 +113,7 @@ class Serving(object):
 
         dataset = dataset.map(
             lambda x: _infer(x), 
-            batch_size = 6, 
+            batch_size = self.inference_batch_size, 
             batched = True,
             desc="generating answers"
         )

@@ -228,6 +228,7 @@ final label: {decoded_labels[6]}
             checkpoint_dir = current_ckpt_dir,
             result_dir = os.path.join(checkpoint_save_dir.replace('checkpoints','inference_outputs'), current_time),
             torch_compile_config = torch_compile_config,
-            lora_config = lora_config
+            lora_config = lora_config,
+            inference_batch_size = eval_batch_size
         )
         s.inference(converted_testdata)

@@ -106,7 +106,11 @@ def get_model_tokenizer(
     
     elif model_key == "lstm":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
-        model = CustomLSTMForCausalLM(config = LSTMConfig())
+        if checkpoint_dir is None:
+            model = CustomLSTMForCausalLM(config = LSTMConfig())
+        else:
+            model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
+        
         return model, tokenizer, None
     
     else:
