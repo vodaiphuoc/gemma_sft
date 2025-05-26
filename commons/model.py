@@ -109,7 +109,9 @@ def get_model_tokenizer(
         if checkpoint_dir is None:
             model = CustomLSTMForCausalLM(config = LSTMConfig())
         else:
-            model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
+            model = CustomLSTMForCausalLM(config = LSTMConfig())
+            checkpoint = torch.load(checkpoint_dir, weights_only=True)
+            model.load_state_dict(checkpoint)
         
         return model, tokenizer, None
     
