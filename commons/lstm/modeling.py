@@ -53,10 +53,10 @@ class LSTMConfig(PretrainedConfig):
         self.num_lsmt_block = num_lsmt_block
 
 class LSTMBlock(nn.Module):
-    def __init__(self, config: LSTMConfig, input_size:int):
+    def __init__(self, config: LSTMConfig, input_size:int, output_size:int):
         super().__init__()
         self.lstm = nn.LSTM(
-            input_size = input_size, 
+            input_size = input_size,
             hidden_size = config.hidden_size, 
             num_layers = config.num_lstm_layer,
             bias = True,
@@ -64,7 +64,7 @@ class LSTMBlock(nn.Module):
             bidirectional = False,
             )
         
-        self.project_back1 = nn.Linear(config.hidden_size, input_size)
+        self.project_back1 = nn.Linear(config.hidden_size, output_size)
         
     def forward(
             self, 
@@ -100,11 +100,24 @@ class LSTMTextModel(nn.Module):
         )]
         ))
         assert len(size_list) == config.num_lsmt_block
-        
+
         self.lstm_blocks = nn.ModuleList(
-            [LSTMBlock(config, _input_size) for _input_size in size_list]
+            [
+                LSTMBlock(
+                    config, 
+                    size_list[_i],
+                    size_list[_i+1],
+                ) if _i != len(size_list) -1
+                else LSTMBlock(
+                    config, 
+                    size_list[_i],
+                    config.hidden_size,
+                )
+
+                for _i in range(len(size_list))
+            ]
         )
-        self.fc = nn.Linear(config.embedding_dim, config.vocab_size)
+        self.fc = nn.Linear(config.hidden_size, config.vocab_size)
         self.dropout = nn.Dropout(config.dropout)
         self.config = config
 
