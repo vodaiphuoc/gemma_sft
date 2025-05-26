@@ -28,12 +28,12 @@ class LSTMConfig(PretrainedConfig):
             sequence_length: int = 2048,
             vocab_size: int = 262144,
             embedding_dim: int = 1152,
-            hidden_size: int = 512,
+            hidden_size: int = 256,
             num_lstm_layer: int = 6,
             bidirectional:bool = False,
             dropout: float = 0.1,
             bias: bool = True,
-            num_lsmt_block: int = 6
+            num_lsmt_block: int = 5
         )->None:
         super().__init__(
             pad_token_id=pad_token_id,
