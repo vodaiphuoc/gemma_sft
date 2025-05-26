@@ -18,6 +18,10 @@ from typing import Tuple
 
 class LSTMConfig(PretrainedConfig):
     model_type = "CustomLSTM"
+    architectures = [
+        "CustomLSTMForCausalLM"
+    ]
+    
     def __init__(
             self,
             pad_token_id:int = 0,
