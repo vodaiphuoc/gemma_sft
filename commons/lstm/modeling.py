@@ -62,8 +62,11 @@ class LSTMBlock(nn.Module):
             bias = True,
             batch_first = True,
             bidirectional = False,
-            proj_size = config.hidden_size
             )
+        
+        self.project_back1 = nn.Linear(config.hidden_size, config.embedding_dim)
+        self.project_back2 = nn.Linear(config.hidden_size, config.embedding_dim)
+        self.project_back3 = nn.Linear(config.hidden_size, config.embedding_dim)
 
     def forward(
             self, 
@@ -76,7 +79,7 @@ class LSTMBlock(nn.Module):
             output, (hn, cn) = self.lstm(embeds)
         else:    
             output, (hn, cn) = self.lstm(embeds, (previous_block_hn, previous_block_cn))
-        return output, (hn, cn)
+        return self.project_back1(output), (self.project_back2(hn), self.project_back3(cn))
 
 class LSTMTextModel(nn.Module):
     def __init__(self, config: LSTMConfig):
