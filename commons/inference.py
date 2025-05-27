@@ -100,7 +100,7 @@ class Serving(object):
                 padding_side = 'left',
                 return_tensors = 'pt'
             ).to(self.device)
-            print('check input ids: ', inputs['input_ids'][0])
+            
             with torch.inference_mode():
                 outputs = self.model.generate(
                     **inputs, 
