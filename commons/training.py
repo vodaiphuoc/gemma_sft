@@ -87,46 +87,45 @@ def training_process(
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
         
 
-        print(f"""
-DEBUG:
-raw label: {labels[0]}
--------------------------------------
-""")
+#         print(f"""
+# DEBUG:
+# raw label: {labels[0]}
+# -------------------------------------
+# """)
         
         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
 
-        print(f"""
--------------------------------------
-DEBUG:
-decoded pred: {tokenizer.decode(preds[2], skip_special_tokens=False).strip()}
-decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
--------------------------------------
-""")
+#         print(f"""
+# -------------------------------------
+# DEBUG:
+# decoded pred: {tokenizer.decode(preds[2], skip_special_tokens=False).strip()}
+# decoded label: {tokenizer.decode(labels[2], skip_special_tokens=False).strip()}
+# -------------------------------------
+# """)
 
 
-        # Some simple post-processing
         decoded_preds = [pred.strip() for pred in decoded_preds]
         decoded_labels = [[label.strip()] for label in decoded_labels]
         
 
 
-        print(f"""
--------------------------------------
-DEBUG:
-final pred: {decoded_preds[5]}
-final label: {decoded_labels[5]}
--------------------------------------
-""")
+#         print(f"""
+# -------------------------------------
+# DEBUG:
+# final pred: {decoded_preds[5]}
+# final label: {decoded_labels[5]}
+# -------------------------------------
+# """)
 
-        print(f"""
--------------------------------------
-DEBUG:
-final pred: {decoded_preds[6]}
-final label: {decoded_labels[6]}
--------------------------------------
-""")
+#         print(f"""
+# -------------------------------------
+# DEBUG:
+# final pred: {decoded_preds[6]}
+# final label: {decoded_labels[6]}
+# -------------------------------------
+# """)
 
 
         bleu_value = bleu_score(preds=decoded_preds, target=decoded_labels)
