@@ -194,7 +194,7 @@ final label: {decoded_labels[6]}
         ),
         peft_config=lora_config, # lora config
     )
-    trainer.remove_callback(PrinterCallback())
+    # trainer.remove_callback(PrinterCallback())
     print('start training')
     trainer.train()
     print('run evaluate')
