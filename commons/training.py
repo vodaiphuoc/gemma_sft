@@ -182,8 +182,8 @@ final label: {decoded_labels[6]}
             optim = 'adamw_torch_fused',
             weight_decay = 0.005,
             label_names=["labels"],
-            logging_strategy = 'steps',
-            logging_steps = 1,
+            logging_strategy = 'no',
+            # logging_steps = 1,
             logging_dir = logging_dir,
             disable_tqdm = False,
             report_to = "none",
@@ -194,7 +194,7 @@ final label: {decoded_labels[6]}
         ),
         peft_config=lora_config, # lora config
     )
-    trainer.remove_callback(PrinterCallback)
+    trainer.remove_callback(PrinterCallback())
     print('start training')
     trainer.train()
     print('run evaluate')
