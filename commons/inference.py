@@ -7,6 +7,7 @@ from torchmetrics.functional.text import bleu_score
 from torchmetrics.functional.text.rouge import rouge_score
 import os 
 import json
+from transformers import CompileConfig
 
 class Serving(object):
     _generation_config = {
@@ -14,7 +15,12 @@ class Serving(object):
         "do_sample": True,
         "temperature": 1.0,
         "top_k": 64,
-        "top_p": 0.95
+        "top_p": 0.95,
+        "cache_implementation":"static",
+        "compile_config": CompileConfig(
+            backend = "inductor",
+            mode="default",
+        )
     }
 
     def __init__(
@@ -39,9 +45,9 @@ class Serving(object):
                 distribution_type = distribution_type,
                 checkpoint_dir = checkpoint_dir
             )
-            precompile_model = precompile_model.to(device)
+            self.model = precompile_model.to(device)
             self.model = torch.compile(
-                precompile_model, 
+                self.model, 
                 mode=torch_compile_config['torch_compile_mode'],
                 backend=torch_compile_config['torch_compile_backend']
             )
