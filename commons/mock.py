@@ -207,3 +207,20 @@ class MockSFTTrainerV2(SFTTrainer):
                 self._eval_dataloaders = {dataloader_key: eval_dataloader}
 
         return self.accelerator.prepare(eval_dataloader)
+
+
+
+class MockSaveTrainer(SFTTrainer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print('self.model type: ', type(self.model))
+        print('num trainable params: ',self.model.print_trainable_parameters())
+
+    def _save(self, *args, **kwargs):
+        r"""Overide internal _save method"""
+        from torchao.quantization.qat import (
+            Int8DynActInt4WeightQATQuantizer
+        )
+        quantizer = Int8DynActInt4WeightQATQuantizer(groupsize= 32)
+        self.model = quantizer.convert(self.model)
+        super()._save(*args, **kwargs)

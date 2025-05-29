@@ -10,7 +10,7 @@ from .constants import (
 
 from .inference import Serving
 
-from .mock import MockSFTTrainer, MockSFTTrainerV2
+from .mock import MockSaveTrainer
 from .utils import LearningRateLogger
 from transformers.trainer_callback import PrinterCallback
 
@@ -52,7 +52,7 @@ def training_process(
         }
         max_length = 2176 if model_key == "gemma" else 2048
         dataloader_prefetch_factor = 2
-        gradient_accumulation_steps = 8
+        gradient_accumulation_steps = 6 if model_key == "gemma" else 4
 
     import numpy as np
     from torchmetrics.functional.text import bleu_score
@@ -137,7 +137,7 @@ def training_process(
             "rougeL_fmeasure": rouge_value['rougeL_fmeasure']
         }
     
-    trainer = SFTTrainer(
+    trainer = MockSaveTrainer(
         model = model,
         processing_class = tokenizer,
         train_dataset = converted_traindata,
@@ -150,6 +150,7 @@ def training_process(
             do_eval = False,
             eval_strategy = 'no',
             save_strategy = 'no',
+            save_only_model = True,
             num_train_epochs = num_train_epochs,
             per_device_train_batch_size = train_batch_size,
             per_device_eval_batch_size = eval_batch_size,
@@ -167,7 +168,7 @@ def training_process(
             fp16_full_eval = True,
             max_length = max_length,
             completion_only_loss = False,
-            packing = False, # True when use native trl.SFTTrainer, False when use MockSFTTrainer
+            packing = False,
             eval_packing = False,
             jit_mode_eval = False,
             max_seq_length = None,

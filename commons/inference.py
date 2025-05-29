@@ -1,6 +1,5 @@
 from .model import get_model_tokenizer
 from .constants import DISTRIBUTION_DEVICE, DISTRIBUTION_TYPE
-from peft import PeftModel
 from trl import apply_chat_template
 from datasets import Dataset
 import torch
@@ -34,13 +33,12 @@ class Serving(object):
         print("Serving init on device: ", device)
         
         if lora_config is not None:
-            base_model, self.tokenizer, _ = get_model_tokenizer(
+            precompile_model, self.tokenizer, _ = get_model_tokenizer(
                 model_key= model_key, 
                 distribution_device= distribution_device, 
-                distribution_type = distribution_type
+                distribution_type = distribution_type,
+                checkpoint_dir = checkpoint_dir
             )
-            base_model = base_model.to(torch.float16)
-            precompile_model = PeftModel.from_pretrained(base_model, checkpoint_dir).to(device)
 
             self.model = torch.compile(
                 precompile_model, 

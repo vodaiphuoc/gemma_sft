@@ -8,7 +8,7 @@ from .constants import (
     LORA_PARAMS2
 )
 
-from peft import LoraConfig
+from peft import LoraConfig, PeftModel
 from transformers import (
     AutoConfig,
     AutoTokenizer,
@@ -68,21 +68,33 @@ def get_model_tokenizer(
         model_key:str = "gemma",
         distribution_device: DISTRIBUTION_DEVICE = "cuda",
         distribution_type: DISTRIBUTION_TYPE = "ddp",
-        checkpoint_dir: str = None
+        checkpoint_dir: str = None,
+        is_training:bool = True
     )->Tuple[PreTrainedModel, PreTrainedTokenizer,Union[LoraConfig, NoneType]]:
+    r"""
+    For gemma model:
+        if `is_training` is True, wrapp model with `Int8DynActInt4WeightQATQuantizer`
+    """
     
     if model_key == "gemma":
+        from torchao.quantization.qat import (
+            Int8DynActInt4WeightQATQuantizer
+        )
+        quantizer = Int8DynActInt4WeightQATQuantizer(groupsize= 32)
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
+        model = _get_pretrained_model(
+            model_id= MODEL_KEY2IDS[model_key],
+            distribution_device = distribution_device,
+            distribution_type = distribution_type
+        )
 
-        if checkpoint_dir is None:
-            model = _get_pretrained_model(
-                model_id= MODEL_KEY2IDS[model_key],
-                distribution_device = distribution_device,
-                distribution_type = distribution_type
-            )
+        if is_training:
+            model = quantizer.prepare(model)
         else:
-            model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
-
+            assert checkpoint_dir is not None
+            model = PeftModel.from_pretrained(model, checkpoint_dir)
+            model = quantizer.convert(model)
+        
         lora_config = LoraConfig(
             **LORA_PARAMS1
         )
