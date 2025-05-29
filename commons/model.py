@@ -76,7 +76,7 @@ def get_model_tokenizer(
     """
     quantizer = None
     if model_key == "gemma":
-        if checkpoint_dir is not None:
+        if checkpoint_dir is None:
             from torchao.quantization.qat import (
                 ComposableQATQuantizer,
                 Int8DynActInt4WeightQATQuantizer,
