@@ -76,6 +76,7 @@ def get_model_tokenizer(
     """
     quantizer = None
     if model_key == "gemma":
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
         if checkpoint_dir is None:
             from torchao.quantization.qat import (
                 ComposableQATQuantizer,
@@ -87,7 +88,7 @@ def get_model_tokenizer(
                 Int8DynActInt4WeightQATQuantizer(groupsize=32),
                 Int4WeightOnlyEmbeddingQATQuantizer(group_size=32),
             ])
-            tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
+            
             model = _get_pretrained_model(
                 model_id= MODEL_KEY2IDS[model_key],
                 distribution_device = distribution_device,
