@@ -46,8 +46,8 @@ class Serving(object):
                 checkpoint_dir = checkpoint_dir
             )
             self.model = precompile_model.to(device)
-            self.model = torch.compile(
-                self.model, 
+            self.model.forward = torch.compile(
+                self.model.forward, 
                 mode=torch_compile_config['torch_compile_mode'],
                 backend=torch_compile_config['torch_compile_backend']
             )
