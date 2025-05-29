@@ -16,11 +16,11 @@ class Serving(object):
         "temperature": 1.0,
         "top_k": 64,
         "top_p": 0.95,
-        "cache_implementation":"static",
-        "compile_config": CompileConfig(
-            backend = "inductor",
-            mode="default",
-        )
+        "cache_implementation":"hybrid",
+        # "compile_config": CompileConfig(
+        #     backend = "inductor",
+        #     mode="default",
+        # )
     }
 
     def __init__(
@@ -46,11 +46,11 @@ class Serving(object):
                 checkpoint_dir = checkpoint_dir
             )
             self.model = precompile_model.to(device)
-            self.model.forward = torch.compile(
-                self.model.forward, 
-                mode=torch_compile_config['torch_compile_mode'],
-                backend=torch_compile_config['torch_compile_backend']
-            )
+            # self.model.forward = torch.compile(
+            #     self.model.forward, 
+            #     mode=torch_compile_config['torch_compile_mode'],
+            #     backend=torch_compile_config['torch_compile_backend']
+            # )
             self.model.eval()
 
         else:
