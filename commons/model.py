@@ -98,6 +98,7 @@ def get_model_tokenizer(
         lora_config = LoraConfig(
             **LORA_PARAMS1
         )
+        print('model: ', model)
         return model, tokenizer, lora_config
 
     elif model_key == "bart":

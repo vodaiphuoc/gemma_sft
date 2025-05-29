@@ -63,7 +63,8 @@ def training_process(
         model, tokenizer, lora_config = get_model_tokenizer(
             model_key = model_key,
             distribution_device = distribution_device,
-            distribution_type = distribution_type
+            distribution_type = distribution_type,
+            is_training= True
         )
     else:
         model, tokenizer, lora_config = pre_init

@@ -216,11 +216,24 @@ class MockSaveTrainer(SFTTrainer):
         print('self.model type: ', type(self.model))
         print('num trainable params: ',self.model.print_trainable_parameters())
 
-    def _save(self, *args, **kwargs):
-        r"""Overide internal _save method"""
+    def save_model(self, output_dir: str):
+        r"""Overide internal save_model method"""
         from torchao.quantization.qat import (
             Int8DynActInt4WeightQATQuantizer
         )
+        import os
         quantizer = Int8DynActInt4WeightQATQuantizer(groupsize= 32)
-        self.model = quantizer.convert(self.model)
-        super()._save(*args, **kwargs)
+        
+        print('current model: ', self.model)
+        print('current model type: ', type(self.model))
+        
+        merged_model = self.model.merge_and_unload()
+        
+        quanted_model = quantizer.convert(merged_model)
+        print('quanted_model: ', quanted_model)
+        print('quanted_model type: ', type(quanted_model))
+        
+        os.mkdir(os.path.join(output_dir, "state_dict"))
+        os.mkdir(os.path.join(output_dir, "full_model"))
+        torch.save(quanted_model.state_dict(), os.path.join(output_dir, "state_dict"))
+        torch.save(quanted_model, os.path.join(output_dir, "full_model"))
