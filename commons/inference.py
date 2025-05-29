@@ -16,7 +16,7 @@ class Serving(object):
         "temperature": 1.0,
         "top_k": 64,
         "top_p": 0.95,
-        "cache_implementation":"hybrid",
+        "cache_implementation":"static",
         # "compile_config": CompileConfig(
         #     backend = "inductor",
         #     mode="default",
