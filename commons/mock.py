@@ -234,6 +234,7 @@ class MockSaveTrainer(SFTTrainer):
             assert quantizer is not None and isinstance(quantizer, ComposableQATQuantizer)
             merged_model = self.model.merge_and_unload()
             quanted_model = quantizer.convert(merged_model)
+            os.makedirs(output_dir, exist_ok = True)
             torch.save(quanted_model, os.path.join(output_dir,"model_checkpoint.pt"))
         else:
             super().save_model(output_dir)

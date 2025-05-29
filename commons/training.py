@@ -204,7 +204,6 @@ def training_process(
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
-    os.mkdir(current_ckpt_dir)
     trainer.save_model(current_ckpt_dir, model_key, quantizer)
 
     # cleanup
