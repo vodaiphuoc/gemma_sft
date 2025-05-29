@@ -96,7 +96,7 @@ def get_model_tokenizer(
             model = quantizer.prepare(model)
         else:
             model = torch.load(
-                os.path.join(output_dir,"model_checkpoint.pt"), 
+                os.path.join(checkpoint_dir,"model_checkpoint.pt"), 
                 map_location= "cpu", 
                 weights_only= False
             )
