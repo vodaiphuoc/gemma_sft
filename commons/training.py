@@ -60,11 +60,10 @@ def training_process(
     from trl import SFTConfig, SFTTrainer
 
     if pre_init is None:
-        model, tokenizer, lora_config = get_model_tokenizer(
+        model, tokenizer, lora_config, quantizer = get_model_tokenizer(
             model_key = model_key,
             distribution_device = distribution_device,
-            distribution_type = distribution_type,
-            is_training= True
+            distribution_type = distribution_type
         )
     else:
         model, tokenizer, lora_config = pre_init
@@ -205,7 +204,7 @@ def training_process(
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     current_ckpt_dir = os.path.join(checkpoint_save_dir, current_time)
-    trainer.save_model(current_ckpt_dir)
+    trainer.save_model(current_ckpt_dir, model_key, quantizer)
 
     # cleanup
     from accelerate.utils import release_memory

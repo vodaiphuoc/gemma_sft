@@ -68,38 +68,44 @@ def get_model_tokenizer(
         model_key:str = "gemma",
         distribution_device: DISTRIBUTION_DEVICE = "cuda",
         distribution_type: DISTRIBUTION_TYPE = "ddp",
-        checkpoint_dir: str = None,
-        is_training:bool = True
+        checkpoint_dir: str = None
     )->Tuple[PreTrainedModel, PreTrainedTokenizer,Union[LoraConfig, NoneType]]:
     r"""
     For gemma model:
         if `is_training` is True, wrapp model with `Int8DynActInt4WeightQATQuantizer`
     """
-    
+    quantizer = None
     if model_key == "gemma":
-        from torchao.quantization.qat import (
-            Int8DynActInt4WeightQATQuantizer
-        )
-        quantizer = Int8DynActInt4WeightQATQuantizer(groupsize= 32)
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
-        model = _get_pretrained_model(
-            model_id= MODEL_KEY2IDS[model_key],
-            distribution_device = distribution_device,
-            distribution_type = distribution_type
-        )
-
-        if is_training:
+        if checkpoint_dir is not None:
+            from torchao.quantization.qat import (
+                ComposableQATQuantizer,
+                Int8DynActInt4WeightQATQuantizer,
+                Int4WeightOnlyEmbeddingQATQuantizer
+            )
+            
+            quantizer = ComposableQATQuantizer([
+                Int8DynActInt4WeightQATQuantizer(groupsize=32),
+                Int4WeightOnlyEmbeddingQATQuantizer(group_size=32),
+            ])
+            tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
+            model = _get_pretrained_model(
+                model_id= MODEL_KEY2IDS[model_key],
+                distribution_device = distribution_device,
+                distribution_type = distribution_type
+            )
             model = quantizer.prepare(model)
         else:
-            assert checkpoint_dir is not None
-            model = PeftModel.from_pretrained(model, checkpoint_dir)
-            model = quantizer.convert(model)
+            model = torch.load(
+                os.path.join(output_dir,"model_checkpoint.pt"), 
+                map_location= "cpu", 
+                weights_only= False
+            )
         
         lora_config = LoraConfig(
             **LORA_PARAMS1
         )
         print('model: ', model)
-        return model, tokenizer, lora_config
+        return model, tokenizer, lora_config, quantizer
 
     elif model_key == "bart":
         tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(__file__).replace("commons","tokenizer"))
@@ -116,7 +122,7 @@ def get_model_tokenizer(
             model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
 
         model, tokenizer = adjust_tokenizer(model, tokenizer)
-        return model, tokenizer, None
+        return model, tokenizer, None, quantizer
     
     elif model_key == "lstm":
         tokenizer = AutoTokenizer.from_pretrained(MODEL_KEY2IDS[model_key])
@@ -126,7 +132,7 @@ def get_model_tokenizer(
             AutoConfig.register("CustomLSTM", LSTMConfig)
             AutoModelForCausalLM.register(LSTMConfig, CustomLSTMForCausalLM)
             model = AutoModelForCausalLM.from_pretrained(checkpoint_dir)
-        return model, tokenizer, None
+        return model, tokenizer, None, quantizer
     
     else:
         raise NotImplemented(f"Only support key in: {list(MODEL_KEY2IDS.keys())}")

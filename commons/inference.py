@@ -32,14 +32,14 @@ class Serving(object):
             ):
         print("Serving init on device: ", device)
         
-        if lora_config is not None:
-            precompile_model, self.tokenizer, _ = get_model_tokenizer(
-                model_key= model_key, 
+        if lora_config is not None and model_key == "gemma":
+            precompile_model, self.tokenizer, _, _ = get_model_tokenizer(
+                model_key= model_key,
                 distribution_device= distribution_device, 
                 distribution_type = distribution_type,
                 checkpoint_dir = checkpoint_dir
             )
-
+            precompile_model = precompile_model.to(device)
             self.model = torch.compile(
                 precompile_model, 
                 mode=torch_compile_config['torch_compile_mode'],
@@ -48,11 +48,11 @@ class Serving(object):
             self.model.eval()
 
         else:
-            precompile_model, self.tokenizer, _ = get_model_tokenizer(
-            model_key= model_key, 
-            distribution_device = distribution_device, 
-            distribution_type = distribution_type,
-            checkpoint_dir = checkpoint_dir
+            precompile_model, self.tokenizer, _, _  = get_model_tokenizer(
+                model_key= model_key, 
+                distribution_device = distribution_device, 
+                distribution_type = distribution_type,
+                checkpoint_dir = checkpoint_dir
             )
             self.model = precompile_model.to(torch.float16).to(device)
             self.model.eval()
