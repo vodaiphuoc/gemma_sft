@@ -25,7 +25,7 @@ def main(
         pre_init = pre_init,
         model_key = model_key,
         data_version = "3_1",
-        ratio = 0.05,
+        ratio = 0.01,
         distribution_device = distribution_device,
         distribution_type = distribution_type,
         logging_dir = os.path.join(os.path.dirname(__file__),"logs"),
