@@ -3,10 +3,9 @@
 OPTS=$(getopt -o "" --long hf:,ngrok: -- "$@")
 eval set -- "$OPTS"
 
-hf_token="$2"
-ngrok_token="$4"
+huggingface-cli login --token $2
 
-ngrok config add-authtoken $ngrok_token
+ngrok config add-authtoken $4
 ngrok http http://0.0.0.0:8000
 
 vllm serve google/gemma-3-1b-it \
