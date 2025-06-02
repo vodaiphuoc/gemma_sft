@@ -15,9 +15,7 @@ echo done setup ngrok
 huggingface-cli login --token $2
 
 ngrok config add-authtoken $4
-ngrok http http://0.0.0.0:8000
-
-vllm serve google/gemma-3-1b-it \
+ngrok http http://0.0.0.0:8000 & vllm serve google/gemma-3-1b-it \
     --dtype float16 \
     --task generate \
     --trust_remote_code \
