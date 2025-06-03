@@ -9,4 +9,5 @@ data/2_0/
 data/2_1/
 __pycache__/
 push.py
-app/checkpoints/*
+./checkpoints/
+app/checkpoints/2025*
