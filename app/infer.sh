@@ -1,4 +1,5 @@
 #!/bin/bash
+lora_module_path=$(dirname "$(realpath "$0")")/checkpoints/2025-05-30_13-40-23
 
 OPTS=$(getopt -o "" --long hf:,ngrok: -- "$@")
 eval set -- "$OPTS"
@@ -22,5 +23,5 @@ vllm serve google/gemma-3-1b-it \
     --trust_remote_code \
     --max-model-len 512 \
     --enable-lora \
-    --lora-modules ftlora= ./checkpoints/2025-05-30_13-40-23 \
-& ngrok http http://0.0.0.0:8000 
+    --lora-modules ftlora= "$lora_module_path" & \
+ngrok http http://0.0.0.0:8000 
