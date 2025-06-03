@@ -22,5 +22,5 @@ vllm serve "$base_model" \
     --max-model-len 1024 \
     --chat-template "$lora_module_path/2025-05-30_15-57-36/chat_template.jinja" \
     --enable-lora \
-    --lora-modules ftlora_sup="$sup_lora_path" ftlora_main="$main_lora_path"
+    --lora-modules ftlora_sup="$sup_lora_path" ftlora_main="$main_lora_path" & \
 ngrok http http://0.0.0.0:8000 
