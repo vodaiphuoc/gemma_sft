@@ -19,8 +19,6 @@ vllm serve google/gemma-3-1b-it \
     --max-model-len 1024 \
     --chat-template "$lora_module_path/2025-05-30_13-40-23/chat_template.jinja"
     --enable-lora \
-    --lora-modules \
-    ftlora_sup="$lora_module_path/2025-05-30_13-40-23" \
-    ftlora_main="$lora_module_path/2025-05-30_15-57-36" \
+    --lora-modules {ftlora_sup}={"$lora_module_path/2025-05-30_13-40-23"} {ftlora_main}={"$lora_module_path/2025-05-30_15-57-36"} \
 & \
 ngrok http http://0.0.0.0:8000 
