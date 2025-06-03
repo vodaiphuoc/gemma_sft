@@ -1,4 +1,4 @@
-from src.agent import Agent
+from src.agent import Agent, ReponseStatus
 
 from fastapi import FastAPI, Request, Response, Body, status, Depends, WebSocket, WebSocketDisconnect
 from fastapi.encoders import jsonable_encoder
@@ -29,8 +29,6 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
-        print('server side: ', websocket.client_state)
-        print('server side: ', websocket.state)
         self.active_connections.append(websocket)
 
     def disconnect(self, websocket: WebSocket):
@@ -123,7 +121,6 @@ async def chat_router(websocket: WebSocket):
     await websocket.app.manager.connect(websocket)
     
     try:
-        
         while True:
             data = await websocket.receive_json()
             websocket.app.manager.get_active_connections()
@@ -133,25 +130,33 @@ async def chat_router(websocket: WebSocket):
             topic_value = user_message[:35] if data['topic'] == '' else data['topic']
 
             # agent inference
-            agent_response = websocket.app.agent(
+            logger.debug('user_message: {}'.format(user_message))
+            agent_response: ReponseStatus = websocket.app.agent(
                 prompt_data = user_message, 
                 topic =  None if data['topic'] == '' else data['topic']
             )
 
             # add to history chat of current topic
-            websocket.app.agent.chat_hist_db.insert_new_turns(
-                topic = topic_value,
-                new_msgs = [
-                    {"role": "user", "parts": user_message, 'timestamp': use_timestamp},
-                    {"role": "model", "parts": agent_response, 'timestamp': use_timestamp}
-                ]
-            )
+            if agent_response.status_code == 200:
+                websocket.app.agent.chat_hist_db.insert_new_turns(
+                    topic = topic_value,
+                    new_msgs = [
+                        {"role": "user", "content": user_message, 'timestamp': use_timestamp},
+                        {"role": "model", "content": agent_response.answer_response, 'timestamp': use_timestamp}
+                    ]
+                )
             
+            if agent_response.status_code == 200:
             # send data
-            await websocket.app.manager.send_personal_message(
-                message = agent_response,
-                topic = topic_value if data['topic'] == '' else None,
-                websocket= websocket)
+                await websocket.app.manager.send_personal_message(
+                    message = agent_response.answer_response,
+                    topic = topic_value if data['topic'] == '' else None,
+                    websocket= websocket)
+            else:
+                await websocket.app.manager.send_personal_message(
+                    message = agent_response.toStrFailed,
+                    topic = topic_value if data['topic'] == '' else None,
+                    websocket= websocket)
 
     except WebSocketDisconnect:
         websocket.app.manager.disconnect(websocket)
@@ -160,9 +165,8 @@ async def chat_router(websocket: WebSocket):
 async def main_run():
     config = uvicorn.Config("main:app", 
     	port=8080, 
-    	log_level="info", 
     	reload=True,
-		reload_dirs= ["src/front_end/static", "src/front_end/templates"]
+		reload_dirs= ["front_end/static", "front_end/templates"]
     	)
     server = uvicorn.Server(config)
     await server.serve()

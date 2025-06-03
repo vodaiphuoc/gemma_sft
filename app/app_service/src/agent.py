@@ -1,21 +1,30 @@
 from typing import Union, List, Literal, Dict, Optional
 import os
 import json
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
+from pydantic import computed_field
 from collections.abc import Iterable
 import requests
 from src.structuredb import ChatHistoryDB
 import copy
 from dotenv import load_dotenv
+from loguru import logger
 
 @dataclass
 class Answer:
-    answer: str
-    additional_content:str
+    predict_emotion: str
+    response:str
 
 @dataclass
-class FinalAnswer:
-    answers: List[Answer]
+class ReponseStatus:
+    status_msg: Literal["success","backend failed"]
+    status_code: int
+    answer_response: Union[None, str]
+
+    @computed_field
+    @property
+    def toStrFailed(self)->str:
+        return f"status code: {self.status_code}, msg: {self.status_msg}"
 
 class Agent(object):
     SYSTEM_PROMT = "You are a helpfull assistant always give emotional reponse in conservation.\nYour reponse must follow the JSON format:\n{\n    \"predict_emotion\": str\n    \"response\": str\n}\nwhere \"predict_emotion\" can be one of following labels:\n    'sentimental', 'impressed', 'proud', 'devastated', 'content', 'afraid', 'surprised', \n    'hopeful', 'prepared', 'furious', 'faithful', 'angry', 'annoyed', 'sad', 'embarrassed', \n    'confident', 'ashamed', 'apprehensive', 'terrified', 'disappointed', 'lonely', 'jealous', \n    'anxious', 'grateful', 'caring', 'guilty', 'disgusted', 'excited', 'nostalgic', 'joyful', \n    'anticipating', 'trusting'.\nand \"response\" is your main emotional response.\n"
@@ -51,15 +60,12 @@ class Agent(object):
     def __init__(self):
         super().__init__()
         load_dotenv()
-        self._inference_domain = os['inference_service_domain']
+        self._inference_domain = os.environ['inference_service_domain']
         
         self.chat_hist_db = ChatHistoryDB()
+        logger.info("done init Agent")
     
-    def final_processing(self, reponse: Dict[str,str])->str:
-        return  "".join([ans['answer'] + ans['additional_content'] 
-                for ans in reponse['answers']])
-
-    def __call__(self, prompt_data:str, topic:str = None)->List[str]:
+    def __call__(self, prompt_data:str, topic:str = None)->ReponseStatus:
         if topic is not None:
             chat_history = [
                 {
@@ -87,10 +93,46 @@ class Agent(object):
         send_body = copy.deepcopy(self._generation_config)
         send_body['messages'] = messages
 
-        requests.post(
+        responses = requests.post(
             url = self._inference_domain + "/v1/chat/completions",
-            data=json.dumps(send_body)
+            data = json.dumps(send_body),
+            headers = {"Content-Type":"application/json"}
         )
+        if responses.ok:
+            data = responses.json()['choices'][0]['message']['content']
 
-        # step 4
-        return self.final_processing(json.loads(response.text))
+            data_dict = None
+            try:
+                data_dict = json.loads(data)
+            except Exception as e:
+                logger.error(f"reponse not in dict type, {e}")
+                return ReponseStatus(
+                    status_msg= "backend failed", 
+                    status_code= 500, 
+                    answer_response=None
+                )
+            
+            try:
+                assert data_dict is not None
+                ans = Answer(**data_dict)
+                logger.info(f"prediction emotion, {ans.predict_emotion}")
+                return ReponseStatus(
+                    status_msg= "success", 
+                    status_code= 200, 
+                    answer_response=ans.response
+                )
+
+            except Exception as e:
+                logger.error(f"cannot parse to Answer, {e}")
+                return ReponseStatus(
+                    status_msg= "backend failed", 
+                    status_code= 500,
+                    answer_response=None
+                )
+            
+        else:
+            return ReponseStatus(
+                status_msg= "backend failed", 
+                status_code= 500, 
+                answer_response="hi"
+            )

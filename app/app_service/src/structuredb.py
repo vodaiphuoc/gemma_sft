@@ -1,5 +1,5 @@
 from pydantic import TypeAdapter
-
+from loguru import logger
 import sqlite3
 import json
 from typing import List, Tuple, Literal, Union, Dict
@@ -14,7 +14,7 @@ class ChatHistoryDB(object):
             self.connection = sqlite3.connect(db_url)
             
         except sqlite3.Error as error:
-            print(f"Cannot connect to {db_url} db, ", error)
+            logger.error(f"Cannot connect to {db_url} db, ", error)
 
         try:
             with self.connection:
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS chat_history (id INTEGER PRIMARY KEY, Topic TEXT, Rol
 """ 
                 self.connection.execute(create_prompt)
         except sqlite3.Error as error:
-            print('Cannot create table', error)
+            logger.error('Cannot create table', error)
 
     def insert_new_turns(self,
                     topic: str,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS chat_history (id INTEGER PRIMARY KEY, Topic TEXT, Rol
                 self.connection.executemany(insert_prompt, prepare_data)
 
         except Exception as error:
-            print(f"Cannot peform insert many files, error: ", error)
+            logger.error(f"Cannot peform insert many files, error: ", error)
 
     def close(self):
         self.connection.close()
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS chat_history (id INTEGER PRIMARY KEY, Topic TEXT, Rol
                 return list(set([ele[0] for ele in records]))
         
         except Exception as error:
-            print(f"Cannot load topics, error: ", error)
+            logger.error(f"Cannot load topics, error: ", error)
 
     def get_chat_history(self, topic:str)->List[Dict[str,str]]:
         try:
@@ -80,4 +80,4 @@ CREATE TABLE IF NOT EXISTS chat_history (id INTEGER PRIMARY KEY, Topic TEXT, Rol
                 ]
         
         except Exception as error:
-            print(f"Cannot load history with topic {topic} error: ", error)        
+            logger.error(f"Cannot load history with topic {topic} error: ", error)        
