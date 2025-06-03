@@ -11,3 +11,4 @@ __pycache__/
 push.py
 ./checkpoints/
 app/checkpoints/2025*
+.env

@@ -1,0 +1,5 @@
+fastapi
+loguru
+uvicorn
+requests
+python-dotenv
