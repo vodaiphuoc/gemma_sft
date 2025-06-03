@@ -17,7 +17,7 @@ vllm serve google/gemma-3-1b-it \
     --task generate \
     --quantization bitsandbytes \
     --trust_remote_code \
-    --max-model-len 512 \
+    --max-model-len 1024 \
     --enable-lora \
     --lora-modules ftlora="$lora_module_path" & \
 ngrok http http://0.0.0.0:8000 
