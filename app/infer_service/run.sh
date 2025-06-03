@@ -2,16 +2,17 @@
 app_dir=$(dirname $(dirname "$(realpath "$0")"))
 lora_module_path=$app_dir/checkpoints
 
-lora_modules="[{
+lora_modules="{
         "name": "ftlora_sup", 
         "path": "$lora_module_path/2025-05-30_13-40-23", 
         "base_model_name": "google/gemma-3-1b-it"
-    },{
+    } {
         "name": "ftlora_main", 
         "path": "$lora_module_path/2025-05-30_15-57-36", 
         "base_model_name": "google/gemma-3-1b-it"
     }
-]"
+"
+
 
 OPTS=$(getopt -o "" --long hf:,ngrok: -- "$@")
 eval set -- "$OPTS"
